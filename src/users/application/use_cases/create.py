@@ -1,4 +1,4 @@
-from src.shared.domain.repositories import DataRepository
+from src.persistence.domain.repositories import DataRepository
 from src.security.domain.services.hashing import HashingService
 from src.security.domain.services.encryption import EncryptionService
 from src.users.domain.schemas import UserPublic

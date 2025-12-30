@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from typing import TypeVar, Generic, Type, List, Optional, Generator
 import uuid
 from sqlalchemy.orm import DeclarativeBase
-from src.shared.domain.repositories import DataRepository
+from src.persistence.domain.repositories import DataRepository
 
 class Base(DeclarativeBase):
     pass
