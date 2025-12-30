@@ -1,6 +1,6 @@
 import logging
-from src.shared.dependencies.container import Container
-from src.shared.domain.exceptions import DependencyNotRegistered
+from src.di.container import Container
+from src.di.domain.exceptions import DependencyNotRegistered
 
 from src.security.domain.services.web_token import WebTokenService
 from src.security.infrastructure.jwt.web_token import JwtWebTokenService

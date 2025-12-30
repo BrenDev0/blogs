@@ -1,7 +1,7 @@
 from src.persistence.domain.repositories import DataRepository
 from src.security.domain.services.hashing import HashingService
 from src.security.domain.services.encryption import EncryptionService
-from src.users.domain.schemas import UserPublic
+from src.users.domain.schemas import UserPublic, CreateUserRequest
 from src.users.domain.entities import User
 
 class CreateUser:
@@ -18,15 +18,13 @@ class CreateUser:
     
     def execute(
         self,
-        name: str,
-        email: str,
-        password: str
+        req_data: CreateUserRequest
     ):
-        hashed_password = self.__hashing.hash_password(password=password)
-        hashed_email = self.__hashing.hash_for_search(data=email)
+        hashed_password = self.__hashing.hash_password(password=req_data.password)
+        hashed_email = self.__hashing.hash_for_search(data=req_data.email)
 
-        encrypted_name = self.__encrytpion.encrypt(name)
-        encrypted_email = self.__encrytpion.encrypt(email)
+        encrypted_name = self.__encrytpion.encrypt(req_data.name)
+        encrypted_email = self.__encrytpion.encrypt(req_data.email)
 
         user = User(
             name=encrypted_name,

@@ -7,3 +7,5 @@ build/
 dist/
 wheels/
 *.egg-info
+
+dev.py

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from src.users.interface.fastapi import users_routes
 
 
 def create_fastapi_app():
@@ -22,6 +23,9 @@ def create_fastapi_app():
         """
         return {"status": "Blogs ok"}
     
+    
+    app.include_router(users_routes.router)
+
     return app
     
     
