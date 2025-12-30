@@ -1,5 +1,6 @@
 [project]
 name = "blogs-app"
+version = "2.0.0"
 description = "App for adding blogs to websites"
 requires-python = ">=3.12"
 dependencies = [
