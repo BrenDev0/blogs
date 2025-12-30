@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
 import os
-import uvicorn
 import logging
 from src.app.interface.fastapi.server import create_fastapi_app
 
@@ -19,6 +18,7 @@ logger.debug("!!!!! LOGGER LEVEL SET TO DEBUG !!!!!")
 app = create_fastapi_app()
 
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(
         app=app,
         host="0.0.0.0",
