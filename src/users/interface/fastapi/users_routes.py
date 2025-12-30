@@ -6,17 +6,17 @@ from src.security.domain.services.web_token import WebTokenService
 from src.users.dependencies.use_cases import get_create_user_use_case
 from src.security.dependencies.services import get_web_token_service
 from src.app.interface.fastapi.middleware.verification import verification
-
+security = HTTPBearer()
 router = APIRouter(
     prefix="/users",
-    tags=["Users"]
+    tags=["Users"],
+    dependencies=[Depends(security)]
 )
 
 @router.post(
     path="/verified/create", 
     status_code=201, 
-    response_model=UserPublic,
-    dependencies=[Depends(HTTPBearer)]
+    response_model=UserPublic
 )
 def verified_create(
     req: Request,
