@@ -14,7 +14,7 @@ def create_fastapi_app():
         allow_headers=["*"],
     )
 
-    @app.get("/health", tags=["Internal"])
+    @app.get("/", tags=["Internal"])
     async def health():
         """
         ## Health check 
