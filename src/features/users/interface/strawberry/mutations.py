@@ -2,6 +2,7 @@ import logging
 import strawberry
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.app.interface.strawberry.middleware.user_verification import UserVerification
+from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.features.users.interface.strawberry.inputs import (
     CreateUserInput,
     LoginInput, 
