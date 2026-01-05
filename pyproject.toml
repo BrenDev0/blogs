@@ -8,6 +8,7 @@ dependencies = [
     "bcrypt== 5.0.0",
     "cryptography==46.0.3",
     "fastapi==0.128.0",
+    "psycopg2-binary>=2.9.11",
     "pydantic[email]==2.12.5",
     "PyJWT==2.10.1",
     "python-dotenv==1.2.1",

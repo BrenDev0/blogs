@@ -9,6 +9,7 @@ def create_tables():
     try:
         engine = get_engine()
         Base.metadata.create_all(bind=engine)
+        logger.info("tables created")
     
     except Exception as e:
         logger.error(str(e))
