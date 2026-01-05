@@ -47,6 +47,5 @@ class UpdateUser:
             user_id=updated_user.user_id,
             email=self.__encryption.decrypt(updated_user.email),
             name=self.__encryption.decrypt(updated_user.name),
-            is_admin=updated_user.is_admin,
             created_at=updated_user.created_at
         )

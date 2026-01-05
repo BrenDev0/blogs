@@ -47,8 +47,7 @@ def test_login_success(
         email="email",
         email_hash="hashed_email",
         password="hashed_password",
-        created_at=datetime.now(),
-        is_admin=True
+        created_at=datetime.now()
     )
 
     fake_updated_user = User(
@@ -57,8 +56,7 @@ def test_login_success(
         email="email",
         email_hash="hashed_email",
         password="hashed_password",
-        created_at=datetime.now(),
-        is_admin=True
+        created_at=datetime.now()
     )
 
 
@@ -128,8 +126,7 @@ def test_login_incorrect_password(
         email="email",
         email_hash="hashed_email",
         password="hashed_password",
-        created_at=datetime.now(),
-        is_admin=True
+        created_at=datetime.now()
     )
 
     mock_hashing.hash_for_search.return_value = "hashed_email"

@@ -17,7 +17,6 @@ class UserPublic(UserShemaBase):
     user_id: UUID
     email: str
     name:str
-    is_admin: bool
     created_at: datetime
 
 class CreateUserRequest(UserShemaBase):

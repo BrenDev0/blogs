@@ -55,8 +55,7 @@ def test_user_update_success(
         email="updated_email",
         email_hash="hashed_email",
         password="password",
-        created_at=datetime.now(),
-        is_admin=True
+        created_at=datetime.now()
     )
 
     mock_encryption.decrypt.return_value = "decrypted"

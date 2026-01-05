@@ -31,7 +31,7 @@ def create_fastapi_app():
         ## Health check 
         This endpoints verifies server status.
         """
-        return {"status": "ConvertIA ok"}
+        return {"status": "Blogs ok"}
     
 
     graphql_router = get_strawberry_graphql_router()

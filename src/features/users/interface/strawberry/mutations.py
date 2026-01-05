@@ -26,9 +26,9 @@ logger = logging.getLogger(__name__)
 class UserMutations:
     @strawberry.mutation(
         permission_classes=[UserVerification],
-        description="Creates an admin user. Verification token from verify email must be used as Auth Bearer."
+        description="Verification token from verify email must be used as Auth Bearer."
     )
-    def create_user_admin(
+    def create_user(
         self,
         info: strawberry.Info,
         input: CreateUserInput
@@ -42,8 +42,7 @@ class UserMutations:
                 raise GraphQlException("Unauthorized")
             
             new_user = use_case.execute(
-                req_data=input.to_pydantic(),
-                is_admin=True
+                req_data=input.to_pydantic()
             )
 
             token_payload = {

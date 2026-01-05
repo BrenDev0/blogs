@@ -44,7 +44,6 @@ def test_success(
         email="encrypted",
         email_hash="hashed_for_search",
         password="hashed",
-        is_admin=True,
         created_at=datetime.now()
     )
 
@@ -62,8 +61,7 @@ def test_success(
     mock_encryption.decrypt.return_value = "decrypted"
 
     result = use_case.execute(
-        req_data=request,
-        is_admin=True
+        req_data=request
     )
 
 

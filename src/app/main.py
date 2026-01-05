@@ -17,7 +17,7 @@ logging.getLogger("httpcore").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 logger.debug("!!!!! LOGGER LEVEL SET TO DEBUG !!!!!")
 
-create_tables()
+
 
 app = create_fastapi_app()
     
@@ -25,7 +25,7 @@ app = create_fastapi_app()
 
 if __name__ == "__main__":
     import uvicorn
-    
+    create_tables()
     uvicorn.run(
         app=app,
         host="0.0.0.0",

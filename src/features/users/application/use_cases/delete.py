@@ -31,6 +31,5 @@ class DeleteUser:
             user_id=deleted_user.user_id,
             email=self.__encryption.decrypt(deleted_user.email),
             name=self.__encryption.decrypt(deleted_user.name),
-            is_admin=deleted_user.is_admin,
             created_at=deleted_user.created_at
         ) 

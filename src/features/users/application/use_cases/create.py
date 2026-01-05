@@ -18,8 +18,7 @@ class CreateUser:
     
     def execute(
         self,
-        req_data: CreateUserRequest,
-        is_admin: bool = False
+        req_data: CreateUserRequest
     ):
         hashed_password = self.__hashing.hash_password(password=req_data.password)
         hashed_email = self.__hashing.hash_for_search(data=req_data.email)
@@ -31,8 +30,7 @@ class CreateUser:
             name=encrypted_name,
             email=encrypted_email,
             password=hashed_password,
-            email_hash=hashed_email,
-            is_admin=is_admin
+            email_hash=hashed_email
         )
 
         new_user: User = self.__repository.create(data=user)
@@ -41,7 +39,6 @@ class CreateUser:
             user_id=new_user.user_id,
             email=self.__encrytpion.decrypt(new_user.email),
             name=self.__encrytpion.decrypt(new_user.name),
-            is_admin=new_user.is_admin,
             created_at=new_user.created_at
         )
 

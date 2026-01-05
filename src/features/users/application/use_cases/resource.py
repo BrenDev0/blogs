@@ -27,7 +27,6 @@ class GetUser:
                 user_id=user.user_id,
                 email=self.__encryption.decrypt(user.email),
                 name=self.__encryption.decrypt(user.name),
-                is_admin=user.is_admin,
                 created_at=user.created_at
             )
 

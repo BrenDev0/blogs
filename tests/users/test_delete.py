@@ -39,8 +39,7 @@ def test_delete_success(
         email="email",
         email_hash="hashed email",
         password="hashed password",
-        created_at=datetime.now(),
-        is_admin=True
+        created_at=datetime.now()
     )
 
     mock_repository.delete.return_value = fake_user

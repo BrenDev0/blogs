@@ -56,7 +56,6 @@ class UserLogin:
             user_id=user_exists.user_id,
             email=self.__encrytpion.decrypt(updated_user.email),
             name=self.__encrytpion.decrypt(updated_user.name),
-            is_admin=updated_user.is_admin,
             created_at=updated_user.created_at
         )
 

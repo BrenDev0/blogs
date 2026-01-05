@@ -9,5 +9,4 @@ class User(BaseModel):
     email_hash: str
     name: str
     password: str
-    is_admin: bool
     created_at: Optional[datetime] = None
