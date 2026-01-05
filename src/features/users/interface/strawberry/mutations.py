@@ -1,0 +1,172 @@
+import logging
+import strawberry
+from src.app.interface.strawberry.middleware.user_auth import UserAuth
+from src.app.interface.strawberry.middleware.user_verification import UserVerification
+from src.features.users.interface.strawberry.inputs import (
+    CreateUserInput,
+    LoginInput, 
+    UpdateUserInput
+)
+from src.features.users.interface.strawberry.types import UserType, UserWithTokenType
+from src.features.users.domain.schemas import UpdateUserSchema
+from src.app.domain.exceptions import GraphQlException
+from src.persistence.domain.exceptions import NotFoundException
+from src.security.domain.exceptions import IncorrectPassword
+from src.features.users.dependencies.use_cases import (
+    get_create_user_use_case, 
+    get_login_use_case, 
+    get_delete_user_use_case, 
+    get_update_user_use_case
+)
+from src.features.users.dependencies.business_rules import get_update_password_rule
+from src.security.dependencies.services import get_web_token_service
+logger = logging.getLogger(__name__)
+
+@strawberry.type
+class UserMutations:
+    @strawberry.mutation(
+        permission_classes=[UserVerification],
+        description="Creates an admin user. Verification token from verify email must be used as Auth Bearer."
+    )
+    def create_user_admin(
+        self,
+        info: strawberry.Info,
+        input: CreateUserInput
+    ) -> UserWithTokenType:
+        use_case = get_create_user_use_case()
+        web_token_service = get_web_token_service()
+
+        try:
+            verification_code = info.context.get("verification_code")
+            if int(input.code) != int(verification_code):
+                raise GraphQlException("Unauthorized")
+            
+            new_user = use_case.execute(
+                req_data=input.to_pydantic(),
+                is_admin=True
+            )
+
+            token_payload = {
+                "user_id": str(new_user.user_id)
+            }
+
+            token = web_token_service.generate(
+                payload=token_payload,
+                expiration=604800 # 7 days
+            )
+
+            return UserWithTokenType(
+                user=new_user,
+                token=token
+            )
+
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+    
+    @strawberry.mutation(
+        permission_classes=[UserAuth],
+        description="Update user by user id in auth token"
+    )
+    def update_user(
+        self,
+        info: strawberry.Info,
+        input: UpdateUserInput
+    ) -> UserType:
+        use_case = get_update_user_use_case()
+        try:
+            user_id = info.context.get("user_id")
+            changes = {}
+            if input.password:
+                if not input.old_password:
+                    raise GraphQlException("Old password requiered to update password")
+            
+                rule = get_update_password_rule()
+                rule.validate(
+                    user_id=user_id,
+                    old_password=input.old_password
+                )
+
+                changes["password"] = input.password
+
+            if input.name is not None:
+                changes["name"] = input.name
+
+            return use_case.execute(
+                user_id=user_id,
+                changes=UpdateUserSchema(**changes)
+            )
+            
+        except NotFoundException as e:
+            raise GraphQlException(str(e))
+        
+        except IncorrectPassword as e:
+            raise GraphQlException(str(e))        
+
+        except GraphQlException:
+            raise
+
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+
+    @strawberry.mutation(
+        description="User login"
+    )
+    def login(
+        self,
+        input: LoginInput
+    ) -> UserWithTokenType:
+        use_case = get_login_use_case()
+        web_token_service = get_web_token_service()
+
+        try:
+            user = use_case.execute(
+                email=input.email,
+                password=input.password
+            )
+            token_payload = {
+                "user_id": str(user.user_id)
+            }
+
+            token = web_token_service.generate(
+                payload=token_payload,
+                expiration=604800 # 7 days
+            )
+
+            return UserWithTokenType(
+                user=user,
+                token=token
+            )
+        
+        except (NotFoundException, IncorrectPassword):
+            raise GraphQlException("Incorrect email or password")
+
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+        
+
+    @strawberry.mutation(
+        permission_classes=[UserAuth],
+        description="Delete user by id in auth token"
+    )
+    def delete_user(
+        self,
+        info: strawberry.Info
+    ) -> UserType:
+        use_case = get_delete_user_use_case()
+        try:
+            user_id = info.context.get("user_id")
+
+            return use_case.execute(
+                user_id=user_id
+            )
+
+        except NotFoundException as e:
+            raise GraphQlException(str(e))
+        
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+

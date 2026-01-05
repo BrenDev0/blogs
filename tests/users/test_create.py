@@ -2,9 +2,9 @@ import pytest
 from unittest.mock import Mock, call
 from uuid import uuid4
 from datetime import datetime
-from src.users.application.use_cases.create import CreateUser
-from src.users.domain.schemas import CreateUserRequest
-from src.users.domain.entities import User
+from src.features.users.application.use_cases.create import CreateUser
+from src.features.users.domain.schemas import CreateUserRequest
+from src.features.users.domain.entities import User
 from src.security.domain.services.encryption import EncryptionService
 from src.security.domain.services.hashing import HashingService
 
@@ -44,6 +44,7 @@ def test_success(
         email="encrypted",
         email_hash="hashed_for_search",
         password="hashed",
+        is_admin=True,
         created_at=datetime.now()
     )
 
@@ -61,7 +62,8 @@ def test_success(
     mock_encryption.decrypt.return_value = "decrypted"
 
     result = use_case.execute(
-        req_data=request
+        req_data=request,
+        is_admin=True
     )
 
 

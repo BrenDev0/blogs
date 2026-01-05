@@ -1,0 +1,40 @@
+import logging
+from src.di.domain.exceptions import DependencyNotRegistered
+from src.di.container import Container
+from src.features.users.application.rules.update_password import UpdatePasswordRule
+from src.features.users.application.rules.unique_email import UniqueEmailRule
+from src.features.users.dependencies.repositories import get_user_repository
+from src.security.dependencies.services import get_hashing_service
+logger = logging.getLogger(__name__)
+
+def get_update_password_rule() -> UpdatePasswordRule:
+    try:
+        instance_key = "update_password_rule"
+        business_rule = Container.resolve(instance_key)
+    
+    except DependencyNotRegistered:
+        business_rule = UpdatePasswordRule(
+            repository=get_user_repository(),
+            hashing=get_hashing_service()
+        )
+
+        Container.register(instance_key, business_rule)
+        logger.debug(f"{instance_key} registered")
+
+    return business_rule
+
+def get_unique_email_rule() -> UniqueEmailRule:
+    try:
+        instance_key = "unique_email_rule"
+        business_rule = Container.resolve(instance_key)
+    
+    except DependencyNotRegistered:
+        business_rule = UniqueEmailRule(
+            repository=get_user_repository(),
+            hashing=get_hashing_service()
+        )
+
+        Container.register(instance_key, business_rule)
+        logger.debug(f"{instance_key} registered")
+
+    return business_rule
