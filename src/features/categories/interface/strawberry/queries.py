@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 @strawberry.type
 class CategoryQueries:
     @strawberry.field(
-        description="Get all categories by user."
+        description="Get all categories by user. **Uprotected route**"
     )
     def categories_collection(
         self,
