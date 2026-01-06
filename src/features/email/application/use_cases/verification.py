@@ -44,7 +44,7 @@ class VerificationEmail:
             verification_code=verification_code
         )
 
-        self.__sender.execute(
+        self.__sender.send(
             email=email
         )
 
