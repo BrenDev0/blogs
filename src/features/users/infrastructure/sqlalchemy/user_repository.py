@@ -12,7 +12,6 @@ class SqlAlchemyUser(Base):
     email_hash = Column(String, nullable=False)
     name = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    is_admin = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
 
@@ -26,7 +25,6 @@ class SqlAlchemyUserRepository(SqlAlchemyDataRepository[User, SqlAlchemyUser]):
             email=model.email,
             email_hash=model.email_hash,
             password=model.password,
-            is_admin=model.is_admin,
             created_at=model.created_at
         )
     
