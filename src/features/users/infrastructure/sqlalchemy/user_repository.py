@@ -22,6 +22,7 @@ class SqlAlchemyUserRepository(SqlAlchemyDataRepository[User, SqlAlchemyUser]):
     def _to_entity(self, model: SqlAlchemyUser):
         return User(
             user_id=model.user_id,
+            name=model.name,
             email=model.email,
             email_hash=model.email_hash,
             password=model.password,
