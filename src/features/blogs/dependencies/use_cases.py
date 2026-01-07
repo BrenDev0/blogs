@@ -1,21 +1,23 @@
 import logging
 from src.di.container import Container
 from src.di.domain.exceptions import DependencyNotRegistered
-from src.features.blogs.application.use_cases.create import CreateBlog
-from src.features.blogs.application.use_cases.delete import DeleteBlog
-from src.features.blogs.application.use_cases.resource import GetBlogResource
-from src.features.blogs.application.use_cases.collection import GetBlogsCollection
-from src.features.blogs.application.use_cases.update import UpdateBlog
+from src.features.blogs.application.use_cases import (
+    create,
+    collection,
+    update,
+    delete,
+    resource
+)
 from src.features.blogs.dependencies.repositories import get_blog_repository
 logger = logging.getLogger(__name__)
 
-def get_create_blog_use_case() -> CreateBlog:
+def get_create_blog_use_case() -> create.CreateBlog:
     try:
         instance_key = "create_blog_use_case"
         use_case = Container.resolve(instance_key)
     
     except DependencyNotRegistered:
-        use_case = CreateBlog(
+        use_case = create.CreateBlog(
             repository=get_blog_repository()
         )
 
@@ -25,13 +27,13 @@ def get_create_blog_use_case() -> CreateBlog:
 
     return use_case
 
-def get_delete_blog_use_case() -> DeleteBlog:
+def get_delete_blog_use_case() -> delete.DeleteBlog:
     try:
         instance_key = "delete_blog_use_case"
         use_case = Container.resolve(instance_key)
     
     except DependencyNotRegistered:
-        use_case = DeleteBlog(
+        use_case = delete.DeleteBlog(
             repository=get_blog_repository()
         )
 
@@ -41,13 +43,13 @@ def get_delete_blog_use_case() -> DeleteBlog:
 
     return use_case
 
-def get_blog_resource_use_case():
+def get_blog_resource_use_case() -> resource.GetBlogResource:
     try:
         instance_key = "get_blog_resource_use_case"
         use_case = Container.resolve(instance_key)
     
     except DependencyNotRegistered:
-        use_case = GetBlogResource(
+        use_case = resource.GetBlogResource(
             repository=get_blog_repository()
         )
 
@@ -56,13 +58,13 @@ def get_blog_resource_use_case():
     
     return use_case
 
-def get_blogs_collection_use_case() -> GetBlogsCollection:
+def get_blogs_collection_use_case() -> collection.GetBlogsCollection:
     try:
         instance_key = "get_blogs_collection_use_case"
         use_case = Container.resolve(instance_key)
 
     except DependencyNotRegistered:
-        use_case = GetBlogsCollection(
+        use_case = collection.GetBlogsCollection(
             repository=get_blog_repository()
         )
 
@@ -72,13 +74,13 @@ def get_blogs_collection_use_case() -> GetBlogsCollection:
     
     return use_case
 
-def get_update_blog_use_case() -> UpdateBlog:
+def get_update_blog_use_case() -> update.UpdateBlog:
     try:
         instance_key = "update_blog_use_case"
         use_case = Container.resolve(instance_key)
 
     except DependencyNotRegistered:
-        use_case = UpdateBlog(
+        use_case = update.UpdateBlog(
             repository=get_blog_repository()
         )
 

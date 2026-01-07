@@ -4,17 +4,13 @@ from  uuid import UUID
 from src.persistence.domain.exceptions import NotFoundException
 from src.security.domain.exceptions import PermissionsException
 from src.app.domain.exceptions import GraphQlException
+from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.features.categories.dependencies.use_cases import (
     get_delete_category_use_case,
     get_create_category_use_case,
     get_update_category_use_case
 )
-from src.app.interface.strawberry.middleware.user_auth import UserAuth
-from src.features.categories.interface.strawberry.types import CategoryType
-from src.features.categories.interface.strawberry.inputs import (
-    CreateCategoryInput,
-    UpdateCategoryInput
-)
+from src.features.categories.interface.strawberry import types, inputs
 logger = logging.getLogger(__name__)
 
 @strawberry.type
@@ -26,8 +22,8 @@ class CategoryMutation:
     def create_category(
         self,
         info: strawberry.Info,
-        input: CreateCategoryInput
-    ) -> CategoryType:
+        input: inputs.CreateCategoryInput
+    ) -> types.CategoryType:
         user_id = info.context.get("user_id")
         use_case = get_create_category_use_case()
 
@@ -49,8 +45,8 @@ class CategoryMutation:
         self,
         info: strawberry.Info,
         category_id: UUID,
-        input: UpdateCategoryInput
-    )-> CategoryType:
+        input: inputs.UpdateCategoryInput
+    )-> types.CategoryType:
         user_id = info.context.get("user_id")
         use_case = get_update_category_use_case()
 
@@ -77,7 +73,7 @@ class CategoryMutation:
         self,
         info: strawberry.Info,
         category_id: UUID
-    )-> CategoryType:
+    )-> types.CategoryType:
         user_id = info.context.get("user_id")
         use_case = get_delete_category_use_case()
 

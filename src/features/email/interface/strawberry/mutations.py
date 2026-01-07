@@ -1,12 +1,12 @@
 import logging
 import strawberry
+from src.app.domain.exceptions import GraphQlException
+from src.security.dependencies.services import get_web_token_service
+from src.security.utils.random_code_generator import get_random_code
 from src.features.email.interface.strawberry.types import VerificationTokenType, VerifyEmailType
 from src.features.email.dependencies.use_cases import get_verification_email_use_case
 from src.features.users.dependencies.business_rules import get_unique_email_rule
-from src.security.dependencies.services import get_web_token_service
 from src.features.users.domain.exceptions import EmailInUseException
-from src.security.utils.random_code_generator import get_random_code
-from src.app.domain.exceptions import GraphQlException
 logger = logging.getLogger(__name__)
 
 

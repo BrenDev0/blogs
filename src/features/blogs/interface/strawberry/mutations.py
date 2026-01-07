@@ -2,11 +2,10 @@ import logging
 import strawberry
 from uuid import UUID
 from src.app.domain.exceptions import GraphQlException
-from src.features.blogs.interface.strawberry.inputs import (
-    CreateBlogInput,
-    UpdateBlogInput
+from src.features.blogs.interface.strawberry import (
+    inputs,
+    types
 )
-from src.features.blogs.interface.strawberry.types import BlogType
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.features.blogs.dependencies.use_cases import (
     get_create_blog_use_case,
@@ -26,8 +25,8 @@ class BlogMutations:
     def create_blog(
         self,
         info: strawberry.Info,
-        input: CreateBlogInput
-    ) -> BlogType:
+        input: inputs.CreateBlogInput
+    ) -> types.BlogType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_use_case()
         try:
@@ -48,7 +47,7 @@ class BlogMutations:
         self,
         info: strawberry.Info,
         blog_id: UUID
-    ) -> BlogType:
+    ) -> types.BlogType:
         user_id = info.context.get("user_id")
         use_case = get_delete_blog_use_case()
         try:
@@ -72,8 +71,8 @@ class BlogMutations:
         self,
         info: strawberry.Info,
         blog_id: UUID,
-        input: UpdateBlogInput
-    ) -> BlogType:
+        input: inputs.UpdateBlogInput
+    ) -> types.BlogType:
         user_id = info.context.get("user_id")
         use_case = get_update_blog_use_case()
 

@@ -1,7 +1,6 @@
 from uuid import UUID
-from src.features.blogs.domain.schemas import CreateBlogRequest, BlogPublic
+from src.features.blogs.domain import entities, schemas
 from src.persistence.domain.repositories import DataRepository
-from src.features.blogs.domain.entities import Blog
 
 class CreateBlog:
     def __init__(
@@ -13,15 +12,15 @@ class CreateBlog:
     def execute(
         self,
         user_id: UUID,
-        req_data: CreateBlogRequest
+        req_data: schemas.CreateBlogRequest
     ):
-        blog_data = Blog(
+        blog_data = entities.Blog(
             **req_data.model_dump(exclude_none=True),
             user_id=user_id
         )
 
-        new_blog: Blog = self.__repository.create(
+        new_blog: entities.Blog = self.__repository.create(
             data=blog_data
         )
 
-        return BlogPublic.model_validate(new_blog, from_attributes=True)
+        return schemas.BlogPublic.model_validate(new_blog, from_attributes=True)

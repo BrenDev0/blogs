@@ -5,11 +5,11 @@ from typing import List
 from src.persistence.domain.exceptions import NotFoundException
 from src.security.domain.exceptions import PermissionsException
 from src.app.domain.exceptions import GraphQlException
+from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.features.blogs.dependencies.use_cases import (
     get_blog_resource_use_case,
     get_blogs_collection_use_case
 )
-from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.features.blogs.interface.strawberry.types import BlogType
 logger = logging.getLogger(__name__)
 

@@ -1,23 +1,24 @@
 from uuid import UUID
-from src.features.users.domain.schemas import UpdateUserSchema, UserPublic
-from src.features.users.domain.entities import User
-from src.security.domain.services.encryption import EncryptionService
-from src.security.domain.services.hashing import HashingService
-from src.persistence.domain.repositories import DataRepository
-from src.persistence.domain.exceptions import NotFoundException
+from src.features.users.domain import schemas, entities
+from src.security.domain.services import encryption, hashing
+from src.persistence.domain import repositories, exceptions
 
 class UpdateUser:
     def __init__(
         self, 
-        repository: DataRepository,
-        encryption: EncryptionService,
-        hashing: HashingService
+        repository: repositories.DataRepository,
+        encryption: encryption.EncryptionService,
+        hashing: hashing.HashingService
     ):
         self.__repository = repository
         self.__encryption = encryption
         self.__hashing = hashing
 
-    def execute(self, user_id: UUID, changes: UpdateUserSchema) -> UserPublic:
+    def execute(
+        self, 
+        user_id: UUID, 
+        changes: schemas.UpdateUserSchema
+    ) -> schemas.UserPublic:
         cleaned_changes = changes.model_dump(exclude_unset=True)
         
         processed_changes = {}
@@ -33,17 +34,17 @@ class UpdateUser:
             else:
                 processed_changes[key] = value
         
-        updated_user: User = self.__repository.update(
+        updated_user: entities.User = self.__repository.update(
             key="user_id",
             value=user_id,
             changes=processed_changes
         )
 
         if not updated_user:
-            raise NotFoundException("User not found")
+            raise exceptions.NotFoundException("User not found")
         
         
-        return UserPublic(
+        return schemas.UserPublic(
             user_id=updated_user.user_id,
             email=self.__encryption.decrypt(updated_user.email),
             name=self.__encryption.decrypt(updated_user.name),

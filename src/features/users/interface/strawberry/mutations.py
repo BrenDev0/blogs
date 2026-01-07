@@ -1,18 +1,12 @@
 import logging
 import strawberry
-from src.app.interface.strawberry.middleware.user_auth import UserAuth
-from src.app.interface.strawberry.middleware.user_verification import UserVerification
-from src.app.interface.strawberry.middleware.user_auth import UserAuth
-from src.features.users.interface.strawberry.inputs import (
-    CreateUserInput,
-    LoginInput, 
-    UpdateUserInput
-)
-from src.features.users.interface.strawberry.types import UserType, UserWithTokenType
-from src.features.users.domain.schemas import UpdateUserSchema
+from src.app.interface.strawberry.middleware import user_auth, user_verification
 from src.app.domain.exceptions import GraphQlException
 from src.persistence.domain.exceptions import NotFoundException
 from src.security.domain.exceptions import IncorrectPassword
+from src.features.users.interface.strawberry import inputs, types
+from src.features.users.domain.schemas import UpdateUserSchema
+
 from src.features.users.dependencies.use_cases import (
     get_create_user_use_case, 
     get_login_use_case, 
@@ -26,14 +20,14 @@ logger = logging.getLogger(__name__)
 @strawberry.type
 class UserMutations:
     @strawberry.mutation(
-        permission_classes=[UserVerification],
+        permission_classes=[user_verification.UserVerification],
         description="Verification token from verify email must be used as Auth Bearer."
     )
     def create_user(
         self,
         info: strawberry.Info,
-        input: CreateUserInput
-    ) -> UserWithTokenType:
+        input: inputs.CreateUserInput
+    ) -> types.UserWithTokenType:
         use_case = get_create_user_use_case()
         web_token_service = get_web_token_service()
 
@@ -55,7 +49,7 @@ class UserMutations:
                 expiration=604800 # 7 days
             )
 
-            return UserWithTokenType(
+            return types.UserWithTokenType(
                 user=new_user,
                 token=token
             )
@@ -65,14 +59,14 @@ class UserMutations:
             raise GraphQlException()
     
     @strawberry.mutation(
-        permission_classes=[UserAuth],
+        permission_classes=[user_auth.UserAuth],
         description="Update user by user id in auth token"
     )
     def update_user(
         self,
         info: strawberry.Info,
-        input: UpdateUserInput
-    ) -> UserType:
+        input: inputs.UpdateUserInput
+    ) -> types.UserType:
         use_case = get_update_user_use_case()
         try:
             user_id = info.context.get("user_id")
@@ -115,8 +109,8 @@ class UserMutations:
     )
     def login(
         self,
-        input: LoginInput
-    ) -> UserWithTokenType:
+        input: inputs.LoginInput
+    ) -> types.UserWithTokenType:
         use_case = get_login_use_case()
         web_token_service = get_web_token_service()
 
@@ -134,7 +128,7 @@ class UserMutations:
                 expiration=604800 # 7 days
             )
 
-            return UserWithTokenType(
+            return types.UserWithTokenType(
                 user=user,
                 token=token
             )
@@ -148,13 +142,13 @@ class UserMutations:
         
 
     @strawberry.mutation(
-        permission_classes=[UserAuth],
+        permission_classes=[user_auth.UserAuth],
         description="Delete user by id in auth token"
     )
     def delete_user(
         self,
         info: strawberry.Info
-    ) -> UserType:
+    ) -> types.UserType:
         use_case = get_delete_user_use_case()
         try:
             user_id = info.context.get("user_id")

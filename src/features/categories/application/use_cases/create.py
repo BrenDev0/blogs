@@ -1,7 +1,6 @@
 from uuid import UUID
 from src.persistence.domain.repositories import DataRepository
-from src.features.categories.domain.entities import Category
-from src.features.categories.domain.schemas import CategoryPublic, CreateCategoryRequest
+from src.features.categories.domain import entities, schemas
 
 class CreateCategory:
     def __init__(
@@ -14,9 +13,9 @@ class CreateCategory:
     def execute(
         self,
         user_id: UUID,
-        req_data: CreateCategoryRequest
+        req_data: schemas.CreateCategoryRequest
     ):
-        data = Category(
+        data = entities.Category(
             **req_data.model_dump(),
             user_id=user_id
         )
@@ -25,4 +24,4 @@ class CreateCategory:
             data=data
         )
 
-        return CategoryPublic.model_validate(new_category, from_attributes=True)
+        return schemas.CategoryPublic.model_validate(new_category, from_attributes=True)
