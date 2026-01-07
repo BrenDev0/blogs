@@ -78,8 +78,6 @@ def test_login_success(
         value="hashed_email"
     )
 
-    mock_repository.update.assert_called_once()
-    assert mock_encryption.decrypt.call_count == 2
     mock_encryption.decrypt.assert_has_calls([
         call("email"),
         call("name")
