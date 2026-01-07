@@ -1,12 +1,12 @@
 from uuid import UUID
 from src.security.domain.services.encryption import EncryptionService
 from src.features.users.domain import schemas, entities
-from src.persistence.domain import exceptions, repositories
+from src.persistence.domain import data_repository, exceptions
 
 class DeleteUser:
     def __init__(
        self,
-        repository: repositories.DataRepository,
+        repository: data_repository.DataRepository,
         encryption: EncryptionService
     ) -> schemas.UserPublic:
         self.__repository = repository

@@ -35,3 +35,4 @@ class DataRepository(ABC, Generic[T]):
     @abstractmethod
     def delete(self, key: str, value: str | uuid.UUID) -> List[T] | T | None:
         raise NotImplementedError
+    

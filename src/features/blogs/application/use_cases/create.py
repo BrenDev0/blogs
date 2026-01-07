@@ -1,6 +1,6 @@
 from uuid import UUID
 from src.features.blogs.domain import entities, schemas
-from src.persistence.domain.repositories import DataRepository
+from src.persistence.domain.data_repository import DataRepository
 
 class CreateBlog:
     def __init__(

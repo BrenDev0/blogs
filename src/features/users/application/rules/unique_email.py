@@ -1,4 +1,4 @@
-from src.persistence.domain.repositories import DataRepository
+from src.persistence.domain.data_repository import DataRepository
 from src.security.domain.services.hashing import HashingService
 from src.features.users.domain.exceptions import EmailInUseException
 

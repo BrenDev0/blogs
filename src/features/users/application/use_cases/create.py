@@ -1,4 +1,4 @@
-from src.persistence.domain.repositories import DataRepository
+from src.persistence.domain.data_repository import DataRepository
 from src.security.domain.services import hashing, encryption
 from src.features.users.domain import schemas, entities
 

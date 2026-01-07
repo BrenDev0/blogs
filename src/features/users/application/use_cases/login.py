@@ -1,4 +1,4 @@
-from src.persistence.domain import repositories, exceptions
+from src.persistence.domain import data_repository, exceptions
 from src.security.domain.services import hashing, encryption
 from src.features.users.domain import schemas, entities
 from datetime import datetime, timezone
@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 class UserLogin:
     def __init__(
         self,
-        repository: repositories.DataRepository,
+        repository: data_repository.DataRepository,
         hashing: hashing.HashingService,
         encryption: encryption.EncryptionService
     ) -> schemas.UserPublic:

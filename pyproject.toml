@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "bcrypt== 5.0.0",
+    "boto3>=1.42.24",
     "cryptography==46.0.3",
     "fastapi==0.128.0",
     "psycopg2-binary>=2.9.11",

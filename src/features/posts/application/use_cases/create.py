@@ -1,5 +1,5 @@
 from uuid import UUID
-from src.persistence.domain.repositories import DataRepository
+from src.persistence.domain.data_repository import DataRepository
 from src.features.blogs.domain.entities import Blog
 from src.features.posts.domain import entities, schemas
 from src.persistence.domain.exceptions import NotFoundException

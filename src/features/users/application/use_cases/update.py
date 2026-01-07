@@ -1,12 +1,12 @@
 from uuid import UUID
 from src.features.users.domain import schemas, entities
 from src.security.domain.services import encryption, hashing
-from src.persistence.domain import repositories, exceptions
+from src.persistence.domain import data_repository, exceptions
 
 class UpdateUser:
     def __init__(
         self, 
-        repository: repositories.DataRepository,
+        repository: data_repository.DataRepository,
         encryption: encryption.EncryptionService,
         hashing: hashing.HashingService
     ):

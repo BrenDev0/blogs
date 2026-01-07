@@ -1,12 +1,12 @@
 from uuid import UUID
-from src.persistence.domain import repositories, exceptions
+from src.persistence.domain import data_repository, exceptions
 from src.security.domain.services.hashing import HashingService
 from src.features.users.domain.entities import User
 
 class UpdatePasswordRule:
     def __init__(
         self,
-        repository: repositories.DataRepository,
+        repository: data_repository.DataRepository,
         hashing: HashingService
     ):
         self.__repository = repository

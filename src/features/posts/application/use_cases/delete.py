@@ -1,12 +1,12 @@
 from uuid import UUID
 from src.features.posts.domain import entities, schemas
-from src.persistence.domain import exceptions, repositories
+from src.persistence.domain import data_repository, exceptions
 from src.security.domain.exceptions import PermissionsException
 
 class DeleteBlogPost:
     def __init__(
         self,
-        post_repository: repositories.DataRepository
+        post_repository: data_repository.DataRepository
     ):
         self.__post_repository = post_repository
 

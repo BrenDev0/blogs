@@ -68,7 +68,6 @@ def test_success_no_drafts(
     mock_repistory.get_many.return_value = fake_collection
     
     result = use_case.execute(
-        user_id=user_id,
         blog_id=blog_id,
         include_drafts=False
     )
@@ -221,7 +220,7 @@ def test_permission_error(
         use_case.execute(
             user_id=user_id,
             blog_id=blog_id,
-            include_drafts=False
+            include_drafts=True
         )
 
     mock_repistory.get_many.assert_called_with(

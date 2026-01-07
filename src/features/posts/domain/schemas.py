@@ -35,7 +35,7 @@ class CreateBlogPostRequest(BlogPostConfig):
     images: Optional[List[str]] = None
     published: Optional[bool] = False
 
-class UpdateBlogPost(BlogPostConfig):
+class UpdateBlogPostRequest(BlogPostConfig):
     category_id: Optional[UUID] = None
     author: Optional[UUID] = None
     title: Optional[str] = None

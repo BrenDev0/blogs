@@ -4,7 +4,8 @@ from src.di.container import Container
 from src.features.posts.application.use_cases import (
     collection,
     create,
-    delete
+    delete,
+    update
 )
 from src.features.posts.dependencies.repositories import get_post_repository
 from src.features.blogs.dependencies.repositories import get_blog_repository
@@ -53,4 +54,19 @@ def get_blog_post_collection_use_case() -> collection.GetBlogPostCollection:
         logger.debug(f"{instance_key} registered")
 
     return use_case
+
+def get_update_blog_post_use_case() -> update.UpdateBlogPost:
+    try:
+        instance_key = "update_blog_post_use_case"
+        use_case = Container.resolve(instance_key)
+    
+    except DependencyNotRegistered:
+        use_case = update.UpdateBlogPost(
+            post_repository=get_post_repository()
+        )
+        Container.register(instance_key, use_case)
+        logger.debug(f"{instance_key} registered")
+
+    return use_case
+
 

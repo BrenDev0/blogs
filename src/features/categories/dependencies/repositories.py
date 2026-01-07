@@ -1,7 +1,7 @@
 import logging
 from src.di.container import Container
 from src.di.domain.exceptions import DependencyNotRegistered
-from src.persistence.domain.repositories import DataRepository
+from src.persistence.domain.data_repository import DataRepository
 from src.features.categories.infrastructure.sqlalchemy.category_repository import SqlAlcheyCategoryRepository
 logger = logging.getLogger(__name__)
 
