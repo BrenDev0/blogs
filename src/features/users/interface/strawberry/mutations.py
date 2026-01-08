@@ -78,7 +78,8 @@ class UserMutations:
                 rule = get_update_password_rule()
                 rule.validate(
                     user_id=user_id,
-                    old_password=input.old_password
+                    old_password=input.old_password,
+                    new_password=input.password
                 )
 
                 changes["password"] = input.password
