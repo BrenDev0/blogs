@@ -26,11 +26,11 @@ class CategoryMutation:
     ) -> types.CategoryType:
         user_id = info.context.get("user_id")
         use_case = get_create_category_use_case()
-
+        req_data = input.to_pydantic()
         try:
             return use_case.execute(
                 user_id=user_id,
-                req_data=input.to_pydantic()
+                req_data=req_data
             )
 
         except Exception as e:
@@ -49,12 +49,12 @@ class CategoryMutation:
     )-> types.CategoryType:
         user_id = info.context.get("user_id")
         use_case = get_update_category_use_case()
-
+        req_data = input.to_pydantic()
         try:
             return use_case.execute(
                 user_id=user_id,
                 category_id=category_id,
-                changes=input.to_pydantic()
+                changes=req_data.to_pydantic()
             )
         
         except (PermissionsException, NotFoundException) as e:

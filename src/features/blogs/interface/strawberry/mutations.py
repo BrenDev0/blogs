@@ -29,10 +29,11 @@ class BlogMutations:
     ) -> types.BlogType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_use_case()
+        req_data = input.to_pydantic()
         try:
             return use_case.execute(
                 user_id=user_id,
-                req_data=input.to_pydantic()
+                req_data=req_data
             )
 
         except Exception as e:
@@ -75,12 +76,12 @@ class BlogMutations:
     ) -> types.BlogType:
         user_id = info.context.get("user_id")
         use_case = get_update_blog_use_case()
-
+        req_data = input.to_pydantic()
         try:
             return use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id,
-                changes=input.to_pydantic()
+                changes=req_data
             )
         
         except (NotFoundException, PermissionError) as e:

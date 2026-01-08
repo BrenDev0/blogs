@@ -30,14 +30,14 @@ class UserMutations:
     ) -> types.UserWithTokenType:
         use_case = get_create_user_use_case()
         web_token_service = get_web_token_service()
-
+        req_data = input.to_pydantic()
         try:
             verification_code = info.context.get("verification_code")
-            if int(input.code) != int(verification_code):
+            if int(req_data.code) != int(verification_code):
                 raise GraphQlException("Unauthorized")
             
             new_user = use_case.execute(
-                req_data=input.to_pydantic()
+                req_data=req_data
             )
 
             token_payload = {
@@ -67,25 +67,27 @@ class UserMutations:
         info: strawberry.Info,
         input: inputs.UpdateUserInput
     ) -> types.UserType:
+        req_data = input.to_pydantic()
+        user_id = info.context.get("user_id")
         use_case = get_update_user_use_case()
+
         try:
-            user_id = info.context.get("user_id")
             changes = {}
-            if input.password:
-                if not input.old_password:
+            if req_data.password:
+                if not req_data.old_password:
                     raise GraphQlException("Old password requiered to update password")
             
                 rule = get_update_password_rule()
                 rule.validate(
                     user_id=user_id,
-                    old_password=input.old_password,
-                    new_password=input.password
+                    old_password=req_data.old_password,
+                    new_password=req_data.password
                 )
 
-                changes["password"] = input.password
+                changes["password"] = req_data.password
 
-            if input.name is not None:
-                changes["name"] = input.name
+            if req_data.name is not None:
+                changes["name"] = req_data.name
 
             return use_case.execute(
                 user_id=user_id,
@@ -114,11 +116,11 @@ class UserMutations:
     ) -> types.UserWithTokenType:
         use_case = get_login_use_case()
         web_token_service = get_web_token_service()
-
+        req_data = input.to_pydantic()
         try:
             user = use_case.execute(
-                email=input.email,
-                password=input.password
+                email=req_data.email,
+                password=req_data.password
             )
             token_payload = {
                 "user_id": str(user.user_id)

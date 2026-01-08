@@ -21,15 +21,16 @@ class EmailMutations:
     ) -> VerificationTokenType:
         use_case = get_verification_email_use_case()
         rule = get_unique_email_rule()
+        req_data = input.to_pydantic()
         try: 
             rule.validate(
-                email=input.email
+                email=req_data.email
             )
 
             code = get_random_code(len=6)
 
             use_case.execute(
-                to=input.email,
+                to=req_data.email,
                 verification_code=code
             )
 
