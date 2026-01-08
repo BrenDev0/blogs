@@ -1,5 +1,6 @@
 import logging
 import strawberry
+from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.app.interface.strawberry.middleware import user_auth, user_verification
 from src.app.domain.exceptions import GraphQlException
 from src.persistence.domain.exceptions import NotFoundException
@@ -23,6 +24,7 @@ class UserMutations:
         permission_classes=[user_verification.UserVerification],
         description="Verification token from verify email must be used as Auth Bearer."
     )
+    @validate_input_to_model
     def create_user(
         self,
         info: strawberry.Info,
@@ -30,14 +32,13 @@ class UserMutations:
     ) -> types.UserWithTokenType:
         use_case = get_create_user_use_case()
         web_token_service = get_web_token_service()
-
         try:
             verification_code = info.context.get("verification_code")
             if int(input.code) != int(verification_code):
                 raise GraphQlException("Unauthorized")
             
             new_user = use_case.execute(
-                req_data=input.to_pydantic()
+                req_data=input
             )
 
             token_payload = {
@@ -62,14 +63,16 @@ class UserMutations:
         permission_classes=[user_auth.UserAuth],
         description="Update user by user id in auth token"
     )
+    @validate_input_to_model
     def update_user(
         self,
         info: strawberry.Info,
         input: inputs.UpdateUserInput
     ) -> types.UserType:
+        user_id = info.context.get("user_id")
         use_case = get_update_user_use_case()
+
         try:
-            user_id = info.context.get("user_id")
             changes = {}
             if input.password:
                 if not input.old_password:
@@ -108,6 +111,7 @@ class UserMutations:
     @strawberry.mutation(
         description="User login"
     )
+    @validate_input_to_model
     def login(
         self,
         input: inputs.LoginInput

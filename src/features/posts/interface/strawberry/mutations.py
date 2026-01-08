@@ -2,6 +2,7 @@ import logging
 import strawberry
 from uuid import UUID
 from src.app.domain.exceptions import GraphQlException
+from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.persistence.domain.exceptions import NotFoundException
 from src.security.domain.exceptions import PermissionsException
@@ -19,6 +20,7 @@ class BlogPostMutations:
         permission_classes=[UserAuth],
         description="Create a blog post"
     )
+    @validate_input_to_model
     def create_blog_post(
         self,
         blog_id: UUID,
@@ -32,7 +34,7 @@ class BlogPostMutations:
             return use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id,
-                req_data=input.to_pydantic()
+                req_data=input
             )
         
         except (PermissionsException, NotFoundException) as e:
@@ -46,6 +48,7 @@ class BlogPostMutations:
         permission_classes=[UserAuth],
         description="Update blog post by id"
     )
+    @validate_input_to_model
     def update_blog_post(
         self,
         post_id: UUID,
@@ -59,7 +62,7 @@ class BlogPostMutations:
             return use_case.execute(
                 user_id=user_id,
                 post_id=post_id,
-                changes=input.to_pydantic()
+                changes=input
             )
         
         except (PermissionsException, NotFoundException) as e:

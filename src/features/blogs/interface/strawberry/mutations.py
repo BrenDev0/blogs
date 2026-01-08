@@ -6,6 +6,7 @@ from src.features.blogs.interface.strawberry import (
     inputs,
     types
 )
+from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.features.blogs.dependencies.use_cases import (
     get_create_blog_use_case,
@@ -22,6 +23,7 @@ class BlogMutations:
         permission_classes=[UserAuth],
         description="Create Blog"
     )
+    @validate_input_to_model
     def create_blog(
         self,
         info: strawberry.Info,
@@ -29,10 +31,11 @@ class BlogMutations:
     ) -> types.BlogType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_use_case()
+
         try:
             return use_case.execute(
                 user_id=user_id,
-                req_data=input.to_pydantic()
+                req_data=input
             )
 
         except Exception as e:
@@ -43,6 +46,7 @@ class BlogMutations:
         permission_classes=[UserAuth],
         description="Delete blog by id"
     )
+    
     def delete_blog(
         self,
         info: strawberry.Info,
@@ -67,6 +71,7 @@ class BlogMutations:
         permission_classes=[UserAuth],
         description="Update blog by id"
     )
+    @validate_input_to_model
     def update_blog(
         self,
         info: strawberry.Info,
@@ -75,12 +80,12 @@ class BlogMutations:
     ) -> types.BlogType:
         user_id = info.context.get("user_id")
         use_case = get_update_blog_use_case()
-
+        
         try:
             return use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id,
-                changes=input.to_pydantic()
+                changes=input
             )
         
         except (NotFoundException, PermissionError) as e:
