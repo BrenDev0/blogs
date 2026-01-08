@@ -1,6 +1,7 @@
 import logging
 import strawberry
 from src.app.domain.exceptions import GraphQlException
+from app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.security.dependencies.services import get_web_token_service
 from src.security.utils.random_code_generator import get_random_code
 from src.features.email.interface.strawberry.types import VerificationTokenType, VerifyEmailType
@@ -15,22 +16,23 @@ class EmailMutations:
     @strawberry.mutation(
         description="Send verification code to users email. Will receive a token that can be used for verified requests."
     )
+    @validate_input_to_model
     def verify_email(
         self,
         input: VerifyEmailType
     ) -> VerificationTokenType:
         use_case = get_verification_email_use_case()
         rule = get_unique_email_rule()
-        req_data = input.to_pydantic()
+        
         try: 
             rule.validate(
-                email=req_data.email
+                email=input.email
             )
 
             code = get_random_code(len=6)
 
             use_case.execute(
-                to=req_data.email,
+                to=input.email,
                 verification_code=code
             )
 

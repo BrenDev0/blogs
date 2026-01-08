@@ -5,6 +5,7 @@ from src.persistence.domain.exceptions import NotFoundException
 from src.security.domain.exceptions import PermissionsException
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
+from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.features.categories.dependencies.use_cases import (
     get_delete_category_use_case,
     get_create_category_use_case,
@@ -19,6 +20,7 @@ class CategoryMutation:
         permission_classes=[UserAuth],
         description="Create a category"
     )
+    @validate_input_to_model
     def create_category(
         self,
         info: strawberry.Info,
@@ -26,11 +28,11 @@ class CategoryMutation:
     ) -> types.CategoryType:
         user_id = info.context.get("user_id")
         use_case = get_create_category_use_case()
-        req_data = input.to_pydantic()
+        
         try:
             return use_case.execute(
                 user_id=user_id,
-                req_data=req_data
+                req_data=input
             )
 
         except Exception as e:
@@ -41,6 +43,7 @@ class CategoryMutation:
         permission_classes=[UserAuth],
         description="Update category by id"
     )
+    @validate_input_to_model
     def update_category(
         self,
         info: strawberry.Info,
@@ -49,12 +52,12 @@ class CategoryMutation:
     )-> types.CategoryType:
         user_id = info.context.get("user_id")
         use_case = get_update_category_use_case()
-        req_data = input.to_pydantic()
+    
         try:
             return use_case.execute(
                 user_id=user_id,
                 category_id=category_id,
-                changes=req_data.to_pydantic()
+                changes=input
             )
         
         except (PermissionsException, NotFoundException) as e:
