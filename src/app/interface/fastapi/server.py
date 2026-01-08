@@ -2,8 +2,9 @@ from fastapi import FastAPI, Depends
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from src.app.interface.strawberry.router import get_strawberry_graphql_router
-from src.app.interface.fastapi.middleware.hmac import verify_hmac
+from src.app.interface.fastapi.middleware import hmac
 from src.security.domain.exceptions import HMACException
+
 
 
 def create_fastapi_app():
@@ -34,8 +35,9 @@ def create_fastapi_app():
         return {"status": "Blogs ok"}
     
 
+
     graphql_router = get_strawberry_graphql_router()
-    app.include_router(graphql_router, dependencies=[Depends(verify_hmac)])
+    app.include_router(graphql_router, dependencies=[Depends(hmac.verify_hmac)])
 
     return app
     
