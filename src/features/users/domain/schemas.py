@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from typing import Optional
 from datetime import datetime
@@ -30,9 +30,9 @@ class VerifiedUserUpdateRequest(UserShemaBase):
     password: Optional[str] = None
 
 class UpdateUserRequest(UserShemaBase):
-    name: Optional[str] = None
-    password: Optional[str] = None
-    old_password: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=1)
+    password: Optional[str] = Field(default=None, min_length=1)
+    old_password: Optional[str] = Field(default=None, min_length=1)
 
 class LoginRequest(UserShemaBase):
     email: str

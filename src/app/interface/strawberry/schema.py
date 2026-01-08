@@ -1,4 +1,6 @@
 import strawberry
+from starlette.datastructures import UploadFile
+from strawberry.file_uploads import Upload
 from src.features.users.interface.strawberry import queries as user_queries, mutations as user_mutations
 from src.features.email.interface.strawberry.mutations import EmailMutations
 from src.features.blogs.interface.strawberry import queries as blog_queries, mutations as blog_mutations
@@ -38,4 +40,8 @@ class Mutation():
         return category_mutations.CategoryMutation()
     
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(
+    query=Query, 
+    mutation=Mutation,
+    scalar_overrides={UploadFile: Upload}
+)
