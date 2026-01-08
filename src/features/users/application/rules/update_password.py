@@ -2,6 +2,7 @@ from uuid import UUID
 from src.persistence.domain import data_repository, exceptions
 from src.security.domain.services.hashing import HashingService
 from src.features.users.domain.entities import User
+from src.security.domain.exceptions import IncorrectPassword
 
 class UpdatePasswordRule:
     def __init__(
@@ -16,7 +17,8 @@ class UpdatePasswordRule:
     def validate(
         self,
         user_id: UUID,
-        old_password: str
+        old_password: str,
+        new_password: str
     ):
         user: User = self.__repository.get_one(
             key="user_id",
@@ -26,6 +28,17 @@ class UpdatePasswordRule:
         if not user:
             raise exceptions.NotFoundException("User not found")
         
+        # check new and old password match
+        is_current_password = self.__hashing.compare_password(
+            password=new_password,
+            hashed_password=user.password,
+            throw_error=False
+        )
+
+        if is_current_password:
+            raise IncorrectPassword("New password cannot be same as current password")
+        
+        # check  if user gave  correct   current password
         self.__hashing.compare_password(
             password=old_password,
             hashed_password=user.password,
