@@ -1,7 +1,7 @@
 import logging
 import strawberry
 from src.app.domain.exceptions import GraphQlException
-from app.interface.strawberry.decorators.req_validation import validate_input_to_model
+from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.security.dependencies.services import get_web_token_service
 from src.security.utils.random_code_generator import get_random_code
 from src.features.email.interface.strawberry.types import VerificationTokenType, VerifyEmailType
