@@ -2,15 +2,15 @@ import logging
 import strawberry
 from uuid import UUID
 from src.app.domain.exceptions import GraphQlException
+from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.persistence.domain.exceptions import NotFoundException
 from src.security.domain.exceptions import PermissionsException
-from src.app.interface.strawberry.middleware.user_auth import UserAuth
+from src.features.posts.interface.strawberry import types, inputs
 from src.features.posts.dependencies.use_cases import (
     get_create_blog_post_use_case,
     get_delete_blog_post_use_case,
     get_update_blog_post_use_case
 )
-from src.features.posts.interface.strawberry import types, inputs
 logger = logging.getLogger(__name__)
 
 @strawberry.type
@@ -24,7 +24,7 @@ class BlogPostMutations:
         blog_id: UUID,
         info: strawberry.Info,
         input: inputs.CreateBlogPostInput
-    ):
+    ) -> types.BlogPostType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_post_use_case()
 
@@ -51,7 +51,7 @@ class BlogPostMutations:
         post_id: UUID,
         info: strawberry.Info,
         input: inputs.UpdateBlogPostInput
-    ):
+    ) -> types.BlogPostType:
         user_id = info.context.get("user_id")
         use_case = get_update_blog_post_use_case()
 
@@ -77,7 +77,7 @@ class BlogPostMutations:
         self,
         post_id: UUID,
         info: strawberry.Info
-    ):
+    ) -> types.BlogPostType:
         user_id = info.context.get("user_id")
         use_case = get_delete_blog_post_use_case()
 
