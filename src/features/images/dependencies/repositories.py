@@ -2,11 +2,13 @@ import logging
 import os
 from src.di.container import Container
 from src.di.domain.exceptions import  DependencyNotRegistered
-from src.persistence.domain.file_repository import FileRepository
+from src.persistence.domain import file_repository, data_repository
 from src.persistence.infrastructure.boto3.file_repository import Boto3FileRepository
+from src.features.images.infrastructure.sqlalchemy.image_data_repository import SqlAlchemyImageRepository
+
 logger = logging.getLogger(__name__)
 
-def get_image_file_repository() -> FileRepository:
+def get_image_file_repository() -> file_repository.FileRepository:
     try:
         instance_key = "image_file_repository"
         repository = Container.resolve(instance_key)
@@ -26,6 +28,18 @@ def get_image_file_repository() -> FileRepository:
             region_name=region_name,
             bucket_name=bucket_name
         )
+        Container.register(instance_key, repository)
+        logger.debug(f"{instance_key} registered")
+    
+    return repository
+
+def get_image_data_repository() -> data_repository.DataRepository:
+    try:
+        instance_key = "image_data_repository"
+        repository = Container.resolve(instance_key)
+
+    except DependencyNotRegistered:
+        repository = SqlAlchemyImageRepository()
         Container.register(instance_key, repository)
         logger.debug(f"{instance_key} registered")
     

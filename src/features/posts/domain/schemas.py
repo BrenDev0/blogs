@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 from uuid import UUID
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 
 class BlogPostConfig(BaseModel):
@@ -21,7 +21,6 @@ class BlogPostPublic(BlogPostConfig):
     title: str
     content_1: str
     content_2: Optional[str] = None
-    images: Optional[List[str]] = None
     published: Optional[bool] = False
     published_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
@@ -32,7 +31,6 @@ class CreateBlogPostRequest(BlogPostConfig):
     title: str
     content_1: str
     content_2: Optional[str] = None
-    images: Optional[List[str]] = None
     published: Optional[bool] = False
 
 class UpdateBlogPostRequest(BlogPostConfig):
@@ -41,5 +39,4 @@ class UpdateBlogPostRequest(BlogPostConfig):
     title: Optional[str] = None
     content_1: Optional[str] = None
     content_2: Optional[str] = None
-    images: Optional[List[str]] = None
     published: Optional[bool] = None

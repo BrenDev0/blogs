@@ -6,9 +6,9 @@ from src.features.posts.domain import entities, schemas
 class UpdateBlogPost:
     def __init__(
         self,
-        repository: data_repository.DataRepository
+        post_repository: data_repository.DataRepository
     ):
-        self.__repository = repository
+        self.__post_repository = post_repository
 
     def execute(
         self,
@@ -16,7 +16,7 @@ class UpdateBlogPost:
         post_id: UUID,
         changes: schemas.UpdateBlogPostRequest
     ): 
-        post: entities.BlogPost = self.__repository.get_one(
+        post: entities.BlogPost = self.__post_repository.get_one(
             key="post_id",
             value=post_id
         )
@@ -27,7 +27,7 @@ class UpdateBlogPost:
         if str(post.blog.user_id) != str(user_id):
             raise PermissionsException()
         
-        updated_post: entities.BlogPost = self.__repository.update(
+        updated_post: entities.BlogPost = self.__post_repository.update(
             key="post_id",
             value=post_id,
             changes=changes.model_dump(exclude_none=True)

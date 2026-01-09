@@ -1,11 +1,12 @@
 from uuid import uuid4
-from sqlalchemy import Column, String, DateTime, Boolean, func, ForeignKey, ARRAY
+from sqlalchemy import Column, String, DateTime, Boolean, func, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from src.features.posts.domain.entities import BlogPost
 from src.persistence.infrastructure.sqlalchemy.data_repository import SqlAlchemyDataRepository, Base
 from src.features.blogs.infrastructure.sqlalchemy.blogs_repository import SqlAlchemyBlog
-from  src.features.blogs.domain.entities import Blog
+from src.features.blogs.domain.entities import Blog
+
 
 class SqlAlchemyBlogPost(Base):
     __tablename__ = "posts"
@@ -16,18 +17,16 @@ class SqlAlchemyBlogPost(Base):
     title = Column(String, nullable=False)
     content_1 = Column(String, nullable=True)
     content_2 = Column(String, nullable=True)
-    images = Column(ARRAY(String), nullable=True)
     published = Column(Boolean, nullable=False, default=False)
     published_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
     blog = relationship("SqlAlchemyBlog")
 
 class SqlAlchemyBlogPostRepository(SqlAlchemyDataRepository[BlogPost, SqlAlchemyBlogPost]):
     def __init__(self):
         super().__init__(SqlAlchemyBlogPost)
 
-    def _to_entity(self, model: SqlAlchemyBlogPost):
+    def _to_entity(self, model: SqlAlchemyBlogPost):   
         return BlogPost(
             post_id=model.post_id,
             blog_id=model.blog_id,
@@ -36,7 +35,6 @@ class SqlAlchemyBlogPostRepository(SqlAlchemyDataRepository[BlogPost, SqlAlchemy
             title=model.title,
             content_1=model.content_1,
             content_2=model.content_2,
-            images=model.images,
             published=model.published,
             published_at=model.published_at,
             created_at=model.created_at,

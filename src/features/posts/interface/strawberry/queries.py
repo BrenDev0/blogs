@@ -1,6 +1,7 @@
 import logging
 import strawberry
 from uuid import UUID
+from typing import List
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.security.domain.exceptions import PermissionsException
@@ -14,11 +15,11 @@ class BlogPostQueries:
         permission_classes=[UserAuth],
         description="Get all posts by blog id"
     )
-    def get_all_posts(
+    def collection_all_posts(
         self,
         blog_id: UUID,
         info: strawberry.Info
-    ) -> types.BlogPostType:
+    ) -> List[types.BlogPostType]:
         user_id = info.context.get("user_id")
         use_case = get_blog_post_collection_use_case()
         try:
@@ -38,10 +39,10 @@ class BlogPostQueries:
     @strawberry.field(
         description="Get all published posts by blog id, **UNPROTECTED**"
     )
-    def get_all_posts(
+    def collection_all_published_posts(
         self,
         blog_id: UUID
-    ) -> types.BlogPostType:
+    ) -> List[types.BlogPostType]:
         use_case = get_blog_post_collection_use_case()
         try:
             return use_case.execute(
