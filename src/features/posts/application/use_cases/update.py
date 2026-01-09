@@ -30,7 +30,7 @@ class UpdateBlogPost:
         updated_post: entities.BlogPost = self.__post_repository.update(
             key="post_id",
             value=post_id,
-            changes=changes.model_dump(exclude_none=True)
+            changes=changes.model_dump(exclude_none=True, by_alias=False)
         )
 
         return schemas.BlogPostPublic.model_validate(updated_post, from_attributes=True)
