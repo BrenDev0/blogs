@@ -28,8 +28,8 @@ class BlogPostMutations:
         self,
         blog_id: UUID,
         info: strawberry.Info,
-        images: strawberry.Maybe[List[Upload]],
-        input: inputs.CreateBlogPostInput
+        input: inputs.CreateBlogPostInput,
+        images: strawberry.Maybe[List[Upload] | None] = None,
     ) -> types.BlogPostType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_post_use_case()
@@ -51,7 +51,7 @@ class BlogPostMutations:
                         file_bytes=file_bytes
                     )
 
-            return 
+            return new_post
         
         except (PermissionsException, NotFoundException) as e:
             raise GraphQlException(str(e))

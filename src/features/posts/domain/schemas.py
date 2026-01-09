@@ -1,9 +1,8 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 from uuid import UUID
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
-from src.features.images.domain.schemas import ImagePublic
 
 class BlogPostConfig(BaseModel):
     model_config = ConfigDict(
@@ -22,7 +21,6 @@ class BlogPostPublic(BlogPostConfig):
     title: str
     content_1: str
     content_2: Optional[str] = None
-    images: Optional[List[ImagePublic]] = None
     published: Optional[bool] = False
     published_at: Optional[datetime] = None
     created_at: Optional[datetime] = None

@@ -1,9 +1,8 @@
 from pydantic import BaseModel
 from uuid import UUID
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 from src.features.blogs.domain.entities import Blog
-from src.features.images.domain.entities import Image
 
 class BlogPost(BaseModel):
     post_id: Optional[UUID] = None
@@ -17,4 +16,3 @@ class BlogPost(BaseModel):
     published_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
     blog: Optional[Blog] = None
-    images: Optional[List[Image]] = None
