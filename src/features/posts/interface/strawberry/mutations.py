@@ -41,15 +41,15 @@ class BlogPostMutations:
                 req_data=input
             )
 
-            if images:
-                upload_use_case = get_upload_image_use_case()
-                for image in images:
-                    file_bytes = await image.read()
-                    upload_use_case.execute(
-                        user_id=user_id,
-                        post_id=new_post.post_id,
-                        file_bytes=file_bytes
-                    )
+            # if images:
+            #     upload_use_case = get_upload_image_use_case()
+            #     for image in images:
+            #         file_bytes = await image.read()
+            #         upload_use_case.execute(
+            #             user_id=user_id,
+            #             post_id=new_post.post_id,
+            #             file_bytes=file_bytes
+            #         )
 
             return new_post
         
