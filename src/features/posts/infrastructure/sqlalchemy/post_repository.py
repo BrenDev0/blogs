@@ -6,6 +6,8 @@ from src.features.posts.domain.entities import BlogPost
 from src.persistence.infrastructure.sqlalchemy.data_repository import SqlAlchemyDataRepository, Base
 from src.features.blogs.infrastructure.sqlalchemy.blogs_repository import SqlAlchemyBlog
 from  src.features.blogs.domain.entities import Blog
+from src.features.images.domain.entities import Image
+from src.features.images.infrastructure.sqlalchemy.image_data_repository import SqlAlchemyImage
 
 class SqlAlchemyBlogPost(Base):
     __tablename__ = "posts"
@@ -16,11 +18,14 @@ class SqlAlchemyBlogPost(Base):
     title = Column(String, nullable=False)
     content_1 = Column(String, nullable=True)
     content_2 = Column(String, nullable=True)
-    images = Column(ARRAY(String), nullable=True)
     published = Column(Boolean, nullable=False, default=False)
     published_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+    images = relationship(
+        "SqlAlchemyImage",
+        primaryjoin="SqlAlchemyBlogPost.post_id==SqlAlchemyImage.post_id",
+        lazy="select"
+    )
     blog = relationship("SqlAlchemyBlog")
 
 class SqlAlchemyBlogPostRepository(SqlAlchemyDataRepository[BlogPost, SqlAlchemyBlogPost]):
@@ -28,6 +33,10 @@ class SqlAlchemyBlogPostRepository(SqlAlchemyDataRepository[BlogPost, SqlAlchemy
         super().__init__(SqlAlchemyBlogPost)
 
     def _to_entity(self, model: SqlAlchemyBlogPost):
+        images = [
+            self._image_to_entity(model=image) for image in model.images
+        ]
+        
         return BlogPost(
             post_id=model.post_id,
             blog_id=model.blog_id,
@@ -36,12 +45,20 @@ class SqlAlchemyBlogPostRepository(SqlAlchemyDataRepository[BlogPost, SqlAlchemy
             title=model.title,
             content_1=model.content_1,
             content_2=model.content_2,
-            images=model.images,
+            images=images,
             published=model.published,
             published_at=model.published_at,
             created_at=model.created_at,
             blog=self._blog_to_entity(model.blog)
         )
+    
+    def _image_to_entity(self, model: SqlAlchemyImage):
+        return Image(
+            image_id=model.image_id,
+            post_id=model.image_id,
+            url=model.url,
+            uploaded_at=model.uploaded_at
+        ) 
     
     def _blog_to_entity(self, model: SqlAlchemyBlog):
         if not model:

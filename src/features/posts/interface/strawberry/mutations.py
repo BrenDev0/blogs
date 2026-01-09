@@ -1,5 +1,7 @@
 import logging
 import strawberry
+from strawberry.file_uploads import Upload
+from typing import List
 from uuid import UUID
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
@@ -12,6 +14,7 @@ from src.features.posts.dependencies.use_cases import (
     get_delete_blog_post_use_case,
     get_update_blog_post_use_case
 )
+from src.features.images.dependencies.use_cases import get_upload_image_use_case
 logger = logging.getLogger(__name__)
 
 @strawberry.type
@@ -21,21 +24,34 @@ class BlogPostMutations:
         description="Create a blog post"
     )
     @validate_input_to_model
-    def create_blog_post(
+    async def create_blog_post(
         self,
         blog_id: UUID,
         info: strawberry.Info,
+        images: strawberry.Maybe[List[Upload]],
         input: inputs.CreateBlogPostInput
     ) -> types.BlogPostType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_post_use_case()
 
         try:
-            return use_case.execute(
+            new_post = use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id,
                 req_data=input
             )
+
+            if images:
+                upload_use_case = get_upload_image_use_case()
+                for image in images:
+                    file_bytes = await image.read()
+                    upload_use_case.execute(
+                        user_id=user_id,
+                        post_id=new_post.post_id,
+                        file_bytes=file_bytes
+                    )
+
+            return 
         
         except (PermissionsException, NotFoundException) as e:
             raise GraphQlException(str(e))

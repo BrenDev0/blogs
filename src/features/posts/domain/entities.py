@@ -3,6 +3,7 @@ from uuid import UUID
 from typing import Optional, List
 from datetime import datetime
 from src.features.blogs.domain.entities import Blog
+from src.features.images.domain.entities import Image
 
 class BlogPost(BaseModel):
     post_id: Optional[UUID] = None
@@ -12,8 +13,8 @@ class BlogPost(BaseModel):
     title: str
     content_1: str
     content_2: Optional[str] = None
-    images: Optional[List[str]] = None
     published: Optional[bool] = False
     published_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
     blog: Optional[Blog] = None
+    images: Optional[List[Image]] = None

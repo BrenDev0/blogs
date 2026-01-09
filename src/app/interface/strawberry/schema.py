@@ -5,6 +5,7 @@ from src.features.users.interface.strawberry import queries as user_queries, mut
 from src.features.email.interface.strawberry.mutations import EmailMutations
 from src.features.blogs.interface.strawberry import queries as blog_queries, mutations as blog_mutations
 from src.features.categories.interface.strawberry import queries as category_queries, mutations as category_mutations
+from src.features.posts.interface.strawberry import mutations as blog_post_mutations
 
 @strawberry.type
 class Query():
@@ -38,6 +39,10 @@ class Mutation():
     @strawberry.field
     def categories(self) -> category_mutations.CategoryMutation:
         return category_mutations.CategoryMutation()
+    
+    @strawberry.field
+    def blog_posts(self) -> blog_post_mutations.BlogPostMutations:
+        return blog_post_mutations.BlogPostMutations()
     
 
 schema = strawberry.Schema(
