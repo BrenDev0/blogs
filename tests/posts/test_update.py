@@ -18,7 +18,7 @@ def use_case(
     mock_repository
 ):
     return UpdateBlogPost(
-        repository=mock_repository
+        post_repository=mock_repository
     )
 
 @pytest.fixture
