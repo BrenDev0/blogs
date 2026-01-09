@@ -18,10 +18,10 @@ class BlogPostQueries:
     def collection_all_posts(
         self,
         blog_id: UUID,
+        page_number: int,
         info: strawberry.Info,
         category_id: Optional[UUID] = None,
-        page_number: int = 1,
-        per_page: int = 10
+        per_page: Optional[int] = 10
     ) -> List[types.BlogPostType]:
         user_id = info.context.get("user_id")
         use_case = get_blog_post_collection_use_case()
@@ -58,9 +58,9 @@ class BlogPostQueries:
     def collection_published_posts(
         self,
         blog_id: UUID,
+        page_number: int,
         category_id: Optional[UUID] = None,
-        page_number: int = 1,
-        per_page: int = 10
+        per_page: Optional[int] = 10
     ) -> List[types.BlogPostType]:
         use_case = get_blog_post_collection_use_case()
         try:
