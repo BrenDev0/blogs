@@ -2,7 +2,7 @@ import os
 from abc import abstractmethod
 from contextlib import contextmanager
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update, delete, Engine, create_engine
+from sqlalchemy import select, update, delete, Engine, create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from typing import TypeVar, Generic, Type, List, Optional, Generator
 import uuid
@@ -78,12 +78,23 @@ class SqlAlchemyDataRepository(DataRepository[E], Generic[E, M]):
     def get_many(
         self,
         key: str, 
-        value: str | uuid.UUID, 
+        value: str | uuid.UUID,
+        secondary_key: str = None,
+        secondary_value: str | uuid.UUID = None, 
         limit: int = None, 
+        offset: int = 0,
         order_by=None, 
         desc: bool = False
     ) -> List[E]:
-        stmt = select(self.model).where(getattr(self.model, key) == value)
+        if secondary_key:
+            if not secondary_value:
+                raise ValueError("Value for adn_key required")
+            
+            stmt = select(self.model).where(getattr(self.model, key) == value).where(getattr(self.model, secondary_key) == secondary_value)
+
+        else:
+            stmt = select(self.model).where(getattr(self.model, key) == value)
+
         if order_by:
             col = getattr(self.model, order_by)
             if desc:
@@ -92,6 +103,8 @@ class SqlAlchemyDataRepository(DataRepository[E], Generic[E, M]):
                 stmt = stmt.order_by(col.asc())
         if limit is not None:
             stmt = stmt.limit(limit)
+        if offset:
+            stmt = stmt.offset(offset)
         
         with self._get_session() as db:
             results = db.execute(stmt).scalars().all()

@@ -64,7 +64,7 @@ def test_success_no_drafts(
             created_at=datetime.now(),
             blog=fake_blog
         )
-]
+    ]
     mock_repistory.get_many.return_value = fake_collection
     
     result = use_case.execute(
@@ -74,7 +74,62 @@ def test_success_no_drafts(
 
     mock_repistory.get_many.assert_called_with(
         key="blog_id",
-        value=blog_id
+        value=blog_id,
+        limit=10,
+        offset=0
+    )
+
+    assert isinstance(result, list)
+    assert len(result) == 1
+    assert result[0].title == "published"
+
+def test_success_with_category(
+    mock_repistory,
+    use_case: GetBlogPostCollection
+):
+    user_id = uuid4()
+    blog_id = uuid4()
+    category_id = uuid4()
+
+    fake_blog = Blog(
+        blog_id=blog_id,
+        user_id=user_id,
+        name="...",
+        description="....",
+        created_at=datetime.now()
+    )
+
+    fake_collection = [
+        BlogPost(
+            post_id=uuid4(),
+            blog_id=blog_id,
+            category_id=category_id,
+            author="me",
+            title="published",
+            content_1="...",
+            content_2="...",
+            images=None,
+            published=True,
+            published_at=datetime.now(),
+            created_at=datetime.now(),
+            blog=fake_blog
+        )
+    ]
+    mock_repistory.get_many.return_value = fake_collection
+
+    result = use_case.execute(
+        blog_id=blog_id,
+        category_id=category_id,
+        include_drafts=False
+    )
+
+    mock_repistory.get_many.assert_called_with(
+        key="blog_id",
+        value=blog_id,
+        secondary_key="category_id",
+        secondary_value=category_id,
+        limit=10,
+        offset=0
     )
 
     assert isinstance(result, list)
@@ -125,7 +180,7 @@ def test_success_with_drafts(
             created_at=datetime.now(),
             blog=fake_blog
         )
-]
+    ]
     mock_repistory.get_many.return_value = fake_collection
     
     result = use_case.execute(
@@ -136,14 +191,15 @@ def test_success_with_drafts(
 
     mock_repistory.get_many.assert_called_with(
         key="blog_id",
-        value=blog_id
+        value=blog_id,
+        limit=10,
+        offset=0
     )
 
     assert isinstance(result, list)
     assert len(result) == 2
     assert result[0].title == "published"
     assert result[1].title == "draft"
-
 
 def test_no_results(
     mock_repistory,
@@ -162,12 +218,13 @@ def test_no_results(
 
     mock_repistory.get_many.assert_called_with(
         key="blog_id",
-        value=blog_id
+        value=blog_id,
+        limit=10,
+        offset=0
     )
 
     assert isinstance(result, list)
     assert len(result) == 0
-
 
 def test_permission_error(
     mock_repistory,
@@ -213,7 +270,7 @@ def test_permission_error(
             created_at=datetime.now(),
             blog=fake_blog
         )
-]
+    ]
     mock_repistory.get_many.return_value = fake_collection
     
     with pytest.raises(PermissionsException) as exc_info:
@@ -225,7 +282,10 @@ def test_permission_error(
 
     mock_repistory.get_many.assert_called_with(
         key="blog_id",
-        value=blog_id
+        value=blog_id,
+        limit=10,
+        offset=0
     )
 
     assert "Forbidden" in str(exc_info)
+

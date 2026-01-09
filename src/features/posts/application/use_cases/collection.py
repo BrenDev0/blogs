@@ -16,11 +16,29 @@ class GetBlogPostCollection:
         self,
         blog_id: UUID,
         user_id: UUID = None,
+        category_id: UUID = None,
+        per_page: int = 10,
+        page_number: int = 1,
         include_drafts: bool = False
     ):
-        posts: List[entities.BlogPost] = self.__post_repository.get_many(
+        offset = (page_number - 1) * per_page
+
+        if category_id:
+            posts: List[entities.BlogPost] = self.__post_repository.get_many(
+                key="blog_id",
+                value=blog_id,
+                secondary_key="category_id",
+                secondary_value=category_id,
+                limit=per_page,
+                offset=offset
+            )
+        
+        else:
+            posts: List[entities.BlogPost] = self.__post_repository.get_many(
             key="blog_id",
-            value=blog_id
+            value=blog_id,
+            limit=per_page,
+            offset=offset
         )
 
         if not posts:

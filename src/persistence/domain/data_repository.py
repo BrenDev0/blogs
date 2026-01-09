@@ -17,7 +17,9 @@ class DataRepository(ABC, Generic[T]):
     def get_many(
         self,
         key: str, 
-        value: str | uuid.UUID, 
+        value: str | uuid.UUID,
+        secondary_key: str = None,
+        secondary_value: str | uuid.UUID = None, 
         limit: int = None, 
         order_by=None, 
         desc: bool = False

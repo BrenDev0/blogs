@@ -18,16 +18,32 @@ class BlogPostQueries:
     def collection_all_posts(
         self,
         blog_id: UUID,
-        info: strawberry.Info
+        info: strawberry.Info,
+        category_id: UUID = None,
+        page_number: int = 1,
+        per_page: int = 10
     ) -> List[types.BlogPostType]:
         user_id = info.context.get("user_id")
         use_case = get_blog_post_collection_use_case()
         try:
-            return use_case.execute(
-                user_id=user_id,
-                blog_id=blog_id,
-                include_drafts=True
-            )
+            if category_id:
+                return use_case.execute(
+                    user_id=user_id,
+                    blog_id=blog_id,
+                    category_id=category_id,
+                    per_page=per_page,
+                    page_number=page_number,
+                    include_drafts=True
+                )
+            
+            else:
+                return use_case.execute(
+                    user_id=user_id,
+                    blog_id=blog_id,
+                    per_page=per_page,
+                    page_number=page_number,
+                    include_drafts=True
+                )
         
         except PermissionsException as e:
             raise GraphQlException(str(e))
@@ -39,16 +55,31 @@ class BlogPostQueries:
     @strawberry.field(
         description="Get all published posts by blog id, **UNPROTECTED**"
     )
-    def collection_all_published_posts(
+    def collection_published_posts(
         self,
-        blog_id: UUID
+        blog_id: UUID,
+        category_id: UUID = None,
+        page_number: int = 1,
+        per_page: int = 10
     ) -> List[types.BlogPostType]:
         use_case = get_blog_post_collection_use_case()
         try:
-            return use_case.execute(
-                blog_id=blog_id,
-                include_drafts=False
-            )
+            if category_id:
+                return use_case.execute(
+                    blog_id=blog_id,
+                    category_id=category_id,
+                    per_page=per_page,
+                    page_number=page_number,
+                    include_drafts=False
+                )
+            
+            else:
+                return use_case.execute(
+                    blog_id=blog_id,
+                    per_page=per_page,
+                    page_number=page_number,
+                    include_drafts=False
+                )
         
         except PermissionsException as e:
             raise GraphQlException(str(e))
