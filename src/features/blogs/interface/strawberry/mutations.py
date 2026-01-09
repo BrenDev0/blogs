@@ -13,7 +13,7 @@ from src.features.blogs.dependencies.use_cases import (
     get_delete_blog_use_case,
     get_update_blog_use_case
 )
-from src.persistence.domain.exceptions import NotFoundException
+from src.persistence.domain.exceptions import NotFoundException, UpdateFieldsException
 from src.security.domain.exceptions import PermissionsException
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ class BlogMutations:
                 changes=input
             )
         
-        except (NotFoundException, PermissionError) as e:
+        except (NotFoundException, PermissionError, UpdateFieldsException) as e:
             raise GraphQlException(str(e))
         
         except Exception as e:

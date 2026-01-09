@@ -1,7 +1,7 @@
 import strawberry
 import logging
 from  uuid import UUID
-from src.persistence.domain.exceptions import NotFoundException
+from src.persistence.domain.exceptions import NotFoundException, UpdateFieldsException
 from src.security.domain.exceptions import PermissionsException
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
@@ -86,7 +86,7 @@ class CategoryMutation:
                 category_id=category_id
             )
         
-        except (PermissionsException, NotFoundException) as e:
+        except (PermissionsException, NotFoundException, UpdateFieldsException) as e:
             raise GraphQlException(str(e))
         
         except Exception as e:

@@ -17,6 +17,10 @@ class UpdateCategory:
         category_id: UUID,
         changes: schemas.UpdateCategoryRequest
     ):
+        cleaned_changes = changes.model_dump(exclude_none=True, by_alias=False)
+        if not cleaned_changes:
+            raise exceptions.UpdateFieldsException()
+        
         category: entities.Category = self.__repository.get_one(
             key="category_id",
             value=category_id
@@ -31,7 +35,7 @@ class UpdateCategory:
         updated_category = self.__repository.update(
             key="category_id",
             value=category.category_id,
-            changes=changes.model_dump(exclude_none=True)
+            changes=cleaned_changes
         )
 
         return schemas.CategoryPublic.model_validate(updated_category, from_attributes=True)
