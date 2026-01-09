@@ -1,7 +1,7 @@
 import logging
 import strawberry
 from uuid import UUID
-from typing import List
+from typing import List, Optional
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.security.domain.exceptions import PermissionsException
@@ -19,7 +19,7 @@ class BlogPostQueries:
         self,
         blog_id: UUID,
         info: strawberry.Info,
-        category_id: UUID = None,
+        category_id: Optional[UUID] = None,
         page_number: int = 1,
         per_page: int = 10
     ) -> List[types.BlogPostType]:
