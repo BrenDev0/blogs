@@ -2,6 +2,8 @@ from uuid import UUID
 from src.persistence.domain import data_repository, exceptions
 from src.security.domain.exceptions import PermissionsException
 from src.features.posts.domain import entities, schemas
+from  datetime import datetime
+from datetime import datetime, timezone
 
 class UpdateBlogPost:
     def __init__(
@@ -27,10 +29,18 @@ class UpdateBlogPost:
         if str(post.blog.user_id) != str(user_id):
             raise PermissionsException()
         
+        data = changes.model_dump(exclude_none=True, by_alias=False)
+        
+        is_publishing = data.get("published")
+        
+        if is_publishing:
+            publishing_datetime = datetime.now(timezone.utc)
+            data["published_at"] = publishing_datetime
+
         updated_post: entities.BlogPost = self.__post_repository.update(
             key="post_id",
             value=post_id,
-            changes=changes.model_dump(exclude_none=True, by_alias=False)
+            changes=data
         )
 
         return schemas.BlogPostPublic.model_validate(updated_post, from_attributes=True)
