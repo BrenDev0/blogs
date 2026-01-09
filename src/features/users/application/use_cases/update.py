@@ -20,6 +20,8 @@ class UpdateUser:
         changes: schemas.UpdateUserSchema
     ) -> schemas.UserPublic:
         cleaned_changes = changes.model_dump(exclude_unset=True)
+        if not cleaned_changes:
+            raise exceptions.UpdateFieldsException()
         
         processed_changes = {}
         
@@ -33,6 +35,8 @@ class UpdateUser:
                 processed_changes["password"] = self.__hashing.hash_password(value)
             else:
                 processed_changes[key] = value
+
+            
         
         updated_user: entities.User = self.__repository.update(
             key="user_id",

@@ -3,7 +3,7 @@ import strawberry
 from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.app.interface.strawberry.middleware import user_auth, user_verification
 from src.app.domain.exceptions import GraphQlException
-from src.persistence.domain.exceptions import NotFoundException
+from src.persistence.domain.exceptions import NotFoundException, UpdateFieldsException
 from src.security.domain.exceptions import IncorrectPassword
 from src.features.users.interface.strawberry import inputs, types
 from src.features.users.domain.schemas import UpdateUserSchema
@@ -95,12 +95,9 @@ class UserMutations:
                 changes=UpdateUserSchema(**changes)
             )
             
-        except NotFoundException as e:
+        except (NotFoundException, IncorrectPassword, UpdateFieldsException) as e:
             raise GraphQlException(str(e))
-        
-        except IncorrectPassword as e:
-            raise GraphQlException(str(e))        
-
+            
         except GraphQlException:
             raise
 

@@ -16,6 +16,10 @@ class UpdateBlog:
         blog_id: UUID,
         changes: schemas.UpdateBlogRequest
     ):
+        cleaned_changes = changes.model_dump(exclude_none=True, by_alias=False)
+        if not cleaned_changes:
+            raise exceptions.UpdateFieldsException()
+        
         blog: entities.Blog = self.__repository.get_one(
             key="blog_id",
             value=blog_id
@@ -30,7 +34,7 @@ class UpdateBlog:
         updated_blog: entities.Blog = self.__repository.update(
             key="blog_id",
             value=blog.blog_id,
-            changes=changes.model_dump(exclude_none=True)
+            changes=cleaned_changes
         )
 
         return schemas.BlogPublic.model_validate(updated_blog, from_attributes=True)
