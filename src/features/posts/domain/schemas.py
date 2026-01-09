@@ -35,7 +35,7 @@ class CreateBlogPostRequest(BlogPostConfig):
 
 class UpdateBlogPostRequest(BlogPostConfig):
     category_id: Optional[UUID] = None
-    author: Optional[UUID] = None
+    author: Optional[str] = None
     title: Optional[str] = None
     content_1: Optional[str] = None
     content_2: Optional[str] = None
