@@ -58,7 +58,7 @@ class BlogPostQueries:
     def collection_published_posts(
         self,
         blog_id: UUID,
-        category_id: UUID = None,
+        category_id: Optional[UUID] = None,
         page_number: int = 1,
         per_page: int = 10
     ) -> List[types.BlogPostType]:
