@@ -70,6 +70,22 @@ class ImageMutaions:
     )
     def delete_image(
         self,
-        image_id: UUID
+        image_id: UUID,
+        info: strawberry.Info
     ):
-        pass
+        user_id = info.context.get("user_id")
+        use_case = use_cases.get_delete_image_upload_use_case()
+
+        try:
+            return use_case.execute(
+                user_id=user_id,
+                image_id=image_id
+            )
+        
+        except (NotFoundException, PermissionError) as e:
+            raise GraphQlException(str(e))
+        
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+        
