@@ -6,7 +6,7 @@ from datetime import datetime
 class Image(BaseModel):
     image_id: Optional[UUID] = None
     post_id: UUID
-    url: str
+    url: Optional[str] = True
     uploaded_at: Optional[datetime] = None
 
 

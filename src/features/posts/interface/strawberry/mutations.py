@@ -7,6 +7,7 @@ from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.persistence.domain.exceptions import NotFoundException, UpdateFieldsException
+from src.features.images.domain.exceptions import ImageUploadException
 from src.security.domain.exceptions import PermissionsException
 from src.features.posts.interface.strawberry import types, inputs
 from src.features.posts.dependencies.use_cases import (
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 class BlogPostMutations:
     @strawberry.mutation(
         permission_classes=[UserAuth],
-        description="Create a blog post"
+        description="Create a blog post, Images is an optional field if included images will be uploaded and taged with the post_id"
     )
     @validate_input_to_model
     async def create_blog_post(
@@ -41,19 +42,22 @@ class BlogPostMutations:
                 req_data=input
             )
 
-            # if images:
-            #     upload_use_case = get_upload_image_use_case()
-            #     for image in images:
-            #         file_bytes = await image.read()
-            #         upload_use_case.execute(
-            #             user_id=user_id,
-            #             post_id=new_post.post_id,
-            #             file_bytes=file_bytes
-            #         )
+            if images:
+                upload_use_case = get_upload_image_use_case()
+                for image in images:
+                    file_type = image.content_type
+                    file_bytes = await image.read()
+                
+                    upload_use_case.execute(
+                        user_id=user_id,
+                        post_id=new_post.post_id,
+                        file_bytes=file_bytes,
+                        content_type=file_type
+                    )
 
             return new_post
         
-        except (PermissionsException, NotFoundException) as e:
+        except (PermissionsException, NotFoundException, ImageUploadException) as e:
             raise GraphQlException(str(e))
         
         except Exception as e:
