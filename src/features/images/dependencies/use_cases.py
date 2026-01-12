@@ -32,7 +32,10 @@ def get_delete_image_upload_use_case() -> delete.DeleteImageUpload:
 
     except DependencyNotRegistered:
         use_case = delete.DeleteImageUpload(
-            file_repository=get_image_file_repository()
+            image_file_repository=get_image_file_repository(),
+            image_data_repository=get_image_data_repository(),
+            post_data_repository=get_post_repository()
+            
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")

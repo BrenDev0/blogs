@@ -3,7 +3,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
 from src.features.images.domain.entities import Image
 from src.persistence.infrastructure.sqlalchemy.data_repository import SqlAlchemyDataRepository, Base
-
 class SqlAlchemyImage(Base):
     __tablename__ = "images" 
 
