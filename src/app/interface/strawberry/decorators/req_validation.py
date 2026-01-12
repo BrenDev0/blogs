@@ -11,6 +11,10 @@ def validate_input_to_model(fn):
                 kwargs["input"] = input_arg.to_pydantic()
                 
             except ValidationError as e:
-                raise GraphQlException(str(e))
+                messages = str(e).split('For further information visit https://errors.pydantic.dev/2.12/v/string_too_short')
+                cleaned_messages = [
+                    message.replace("[type=string_too_short, input_value='', input_type=str]", "") for  message in messages
+                ]
+                raise GraphQlException(f"{" ".join(cleaned_messages).strip()}")
         return fn(*args, **kwargs)
     return wrapper
