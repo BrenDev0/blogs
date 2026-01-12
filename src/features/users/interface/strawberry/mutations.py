@@ -74,6 +74,10 @@ class UserMutations:
 
         try:
             changes = {}
+            if input.old_password:
+                if not input.password:
+                    raise GraphQlException("New password requiered to update password")
+                
             if input.password:
                 if not input.old_password:
                     raise GraphQlException("Old password requiered to update password")
