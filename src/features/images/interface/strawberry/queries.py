@@ -1,6 +1,7 @@
 import logging
 import strawberry
 from uuid import UUID
+from typing import List
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.app.domain.exceptions import GraphQlException
 from src.persistence.domain.exceptions import NotFoundException
@@ -13,13 +14,13 @@ logger = logging.getLogger(__name__)
 class ImageQueries:
     @strawberry.field(
         permission_classes=[UserAuth],
-        description="Gets images for any post, this route is protected to allow only user accounts to get images for posts not yet published"
+        description="Gets images for any post, this route is protected to allow only user accounts to get images for any post"
     )
     def image_collection_any(
         self,
         post_id: UUID,
         info: strawberry.Info
-    ) -> types.ImageType:
+    ) -> List[types.ImageType]:
         user_id = info.context.get("user_id")
         use_case = get_image_collection_use_case()
 
@@ -44,7 +45,7 @@ class ImageQueries:
     def image_collection_published(
         self,
         post_id: UUID,
-    ) -> types.ImageType:
+    ) -> List[types.ImageType]:
         use_case = get_image_collection_use_case()
 
         try:

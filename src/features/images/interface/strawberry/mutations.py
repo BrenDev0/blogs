@@ -72,7 +72,7 @@ class ImageMutaions:
         self,
         image_id: UUID,
         info: strawberry.Info
-    ):
+    ) -> types.ImageType:
         user_id = info.context.get("user_id")
         use_case = use_cases.get_delete_image_upload_use_case()
 
