@@ -7,6 +7,7 @@ from src.features.blogs.interface.strawberry import queries as blog_queries, mut
 from src.features.categories.interface.strawberry import queries as category_queries, mutations as category_mutations
 from src.features.posts.interface.strawberry import mutations as blog_post_mutations
 from src.features.posts.interface.strawberry import queries as blog_post_queries, mutations as blog_post_mutations
+from src.features.images.interface.strawberry import queries as image_queries, mutations as image_mutations
 
 @strawberry.type
 class Query():
@@ -25,6 +26,10 @@ class Query():
     @strawberry.field
     def blog_posts(self) -> blog_post_queries.BlogPostQueries:
         return blog_post_queries.BlogPostQueries()
+    
+    @strawberry.field
+    def images(self) -> image_queries.ImageQueries:
+        return image_queries.ImageQueries()
     
     
     
@@ -51,6 +56,10 @@ class Mutation():
     @strawberry.field
     def blog_posts(self) -> blog_post_mutations.BlogPostMutations:
         return blog_post_mutations.BlogPostMutations()
+    
+    @strawberry.field
+    def images(self) ->   image_queries.ImageQueries:
+        return image_queries.ImageQueries()
     
 
 schema = strawberry.Schema(

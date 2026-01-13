@@ -19,11 +19,16 @@ class Boto3FileRepository(FileRepository):
         self.__bucket_name = bucket_name
 
 
-    def upload(self, key, file_bytes) -> str:
+    def upload(self, key, file_bytes, content_type: str) -> str:
         file_obj = io.BytesIO(file_bytes)
 
-        self.__client.upload_fileobj(file_obj, self.__bucket_name, key)
-
+        extra_args = {
+            "ContentType": content_type
+        }
+        
+        self.__client.upload_fileobj(file_obj, self.__bucket_name, key, ExtraArgs=extra_args)
+        
+        
         file_url = f"https://{self.__bucket_name}.s3.amazonaws.com/{key}"
 
         return file_url

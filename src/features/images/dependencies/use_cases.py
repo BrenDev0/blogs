@@ -3,9 +3,11 @@ from src.di.container import Container
 from src.di.domain.exceptions import  DependencyNotRegistered
 from src.features.images.application.use_cases import (
     delete,
-    upload_post_image
+    upload_post_image,
+    collection
 )
-from src.features.images.dependencies.repositories import get_image_file_repository
+from src.features.images.dependencies.repositories import get_image_file_repository, get_image_data_repository
+from src.features.posts.dependencies.repositories import get_post_repository
 logger = logging.getLogger(__name__)
 
 def get_upload_image_use_case() -> upload_post_image.UploadBlogPostImage:
@@ -15,7 +17,9 @@ def get_upload_image_use_case() -> upload_post_image.UploadBlogPostImage:
 
     except DependencyNotRegistered:
         use_case = upload_post_image.UploadBlogPostImage(
-            file_repository=get_image_file_repository()
+            file_repository=get_image_file_repository(),
+            posts_data_repository=get_post_repository(),
+            images_data_repository=get_image_data_repository()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")
@@ -29,7 +33,24 @@ def get_delete_image_upload_use_case() -> delete.DeleteImageUpload:
 
     except DependencyNotRegistered:
         use_case = delete.DeleteImageUpload(
-            file_repository=get_image_file_repository()
+            image_file_repository=get_image_file_repository(),
+            image_data_repository=get_image_data_repository(),
+            post_data_repository=get_post_repository()
+        )
+        Container.register(instance_key, use_case)
+        logger.debug(f"{instance_key} registered")
+    
+    return use_case
+
+def get_image_collection_use_case() -> collection.ImageCollection:
+    try: 
+        instance_key = "image_collection_use_case"
+        use_case = Container.resolve(instance_key)
+
+    except DependencyNotRegistered:
+        use_case = collection.ImageCollection(
+            image_data_repository=get_image_data_repository(),
+            post_repository=get_post_repository()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")
