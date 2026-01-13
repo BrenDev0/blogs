@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime, Boolean, func
+from sqlalchemy import Column, String, ForeignKey, DateTime, Boolean, func, update
 from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
 from src.features.comments.domain.entities import Comment
@@ -17,6 +17,27 @@ class SqlAlchemyComment(Base):
 class SqlAlchemyCommentsRepository(SqlAlchemyDataRepository[Comment, SqlAlchemyComment]):
     def __init__(self):
         super().__init__(SqlAlchemyComment)
+
+    def update(self, key, value, changes):
+        stmt = update(self.model).where(getattr(self.model, key) == value).values(**changes).returning(*self.model.__table__.c)
+
+        with self._get_session() as db:
+            result = db.execute(stmt)
+            db.commit()
+            
+            updated_rows = result.fetchall()
+            
+            if not updated_rows:
+                return None
+            
+            # Create model instance and convert to entity
+            updated_models = [
+                self.model(**row._mapping) for row in updated_rows
+            ]
+            
+            return [
+                self._to_entity(model) for model in updated_models
+            ]
 
     
     def _to_entity(self, model: SqlAlchemyComment):

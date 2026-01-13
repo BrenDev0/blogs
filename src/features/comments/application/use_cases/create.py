@@ -1,12 +1,12 @@
 from uuid import UUID
 from src.persistence.domain import data_repository, exceptions
-from src.features.comments.domain import entities, schemas
+from src.features.comments.domain import entities, schemas, comment_repository
 
 
 class CreateComment:
     def __init__(
         self,
-        comment_repository: data_repository.DataRepository,
+        comment_repository: comment_repository.CommentRepository,
         post_repository: data_repository.DataRepository
     ):
         self.__comment_repostiory = comment_repository
