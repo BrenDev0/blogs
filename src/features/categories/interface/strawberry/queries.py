@@ -15,12 +15,12 @@ class CategoryQueries:
     )
     def categories_collection(
         self,
-        user_id: UUID
+        blog_id: UUID
     ) -> List[CategoryType]:
         use_case = get_category_collection_use_case()
         try:
             return use_case.execute(
-                user_id=user_id
+                blog_id=blog_id
             )
         
         except Exception as e:
