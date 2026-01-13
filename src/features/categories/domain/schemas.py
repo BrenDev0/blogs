@@ -8,7 +8,8 @@ class CategoryBase(BaseModel):
         populate_by_name=True,
         serialize_by_alias=True,
         extra="forbid",
-        alias_generator=to_camel
+        alias_generator=to_camel,
+        str_min_length=1
     )
 
 class CategoryPublic(CategoryBase):
