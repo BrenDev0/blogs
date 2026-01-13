@@ -15,7 +15,7 @@ class BlogPostQueries:
         permission_classes=[UserAuth],
         description="Get all posts by blog id. perPage: # of results returned defualt will be 10, pageNumber: current page the user is requesting, categoryId: Optional, if included the results will be filtered by the category id given"
     )
-    def collection_all_posts(
+    def private_collection(
         self,
         blog_id: UUID,
         page_number: int,
@@ -55,7 +55,7 @@ class BlogPostQueries:
     @strawberry.field(
         description="**UNPROTECTED**, Public endpoint Get published posts by blog id. perPage: # of results returned defualt will be 10, pageNumber: current page the user is requesting, categoryId: Optional, if included the results will be filtered by the category id given"
     )
-    def collection_published_posts(
+    def public_collection(
         self,
         blog_id: UUID,
         page_number: int,

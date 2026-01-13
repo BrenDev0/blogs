@@ -16,7 +16,7 @@ class ImageQueries:
         permission_classes=[UserAuth],
         description="Gets images for any post, this route is protected to allow only user accounts to get images for any post"
     )
-    def image_collection_any(
+    def private_collection(
         self,
         post_id: UUID,
         info: strawberry.Info
@@ -42,7 +42,7 @@ class ImageQueries:
     @strawberry.field(
         description="Gets images for a published post, this route is public to allow anyone to get images for published posts only, **UNPROTECTED**"
     )
-    def image_collection_published(
+    def public_collection(
         self,
         post_id: UUID,
     ) -> List[types.ImageType]:
