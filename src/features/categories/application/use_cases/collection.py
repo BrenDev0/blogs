@@ -1,22 +1,34 @@
 from uuid import UUID 
-from src.persistence.domain.data_repository import DataRepository
+from src.persistence.domain import data_repository, exceptions
 from src.features.categories.domain.schemas import CategoryPublic
+from src.features.blogs.domain.entities import Blog
+
 
 class GetCategoryCollection:
     def __init__(
         self,
-        repository: DataRepository
+        category_repository: data_repository.DataRepository,
+        blog_repository: data_repository.DataRepository
     ):
-        self.__repository = repository
+        self.__category_repository = category_repository
+        self.__blog_repository = blog_repository
 
     
     def execute(
         self,
-        user_id: UUID
+        blog_id: UUID
     ):
-        categories = self.__repository.get_many(
+        blog: Blog = self.__blog_repository.get_one(
+            key="blog_id",
+            value=blog_id
+        )
+
+        if not blog:
+            raise exceptions.NotFoundException("Blog not found")
+
+        categories = self.__category_repository.get_many(
             key="user_id",
-            value=user_id
+            value=blog.user_id
         )
 
         return [

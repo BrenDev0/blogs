@@ -8,6 +8,7 @@ from src.features.categories.application.use_cases import (
     collection
 )
 from src.features.categories.dependencies.repositories import get_category_repository
+from src.features.blogs.dependencies.repositories import get_blog_repository
 logger = logging.getLogger(__name__)
 
 def get_create_category_use_case() -> create.CreateCategory:
@@ -60,7 +61,8 @@ def get_category_collection_use_case() -> collection.GetCategoryCollection:
     
     except DependencyNotRegistered:
         use_case = collection.GetCategoryCollection(
-            repository=get_category_repository()
+            blog_repository=get_blog_repository(),
+            category_repository=get_category_repository()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")
