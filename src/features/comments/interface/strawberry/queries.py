@@ -7,7 +7,7 @@ from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.persistence.domain.exceptions import NotFoundException
 from src.security.domain.exceptions import PermissionsException
 from src.features.comments.interface.strawberry.types import CommentType
-from src.features.comments.dependencies.use_cases import get_comment_collection_use_case
+from src.features.comments.dependencies.use_cases import get_comment_collection_use_case, get_comment_collection_by_blog_use_case
 logger = logging.getLogger(__name__)
 
 @strawberry.type
@@ -40,7 +40,7 @@ class CommentQueries:
         Get all comments.
         """
     )
-    def public_collection(
+    def private_collection(
         post_id: UUID,
         info: strawberry.Info
     ) -> List[CommentType]:
@@ -52,6 +52,36 @@ class CommentQueries:
                 post_id=post_id,
                 user_id=user_id,
                 include_unapproved=True
+            )
+        
+        except PermissionError as e:
+            raise GraphQlException(e)
+
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+        
+    
+    @strawberry.field(
+        permission_classes=[UserAuth],
+        description=
+        """
+        Get all comments by blog.
+        """
+    )
+    def private_blog_collection(
+        blog_id: UUID,
+        info: strawberry.Info
+    ) -> List[CommentType]:
+        try:
+            user_id = info.context.get("user_id")
+            use_case = get_comment_collection_by_blog_use_case()
+
+            return use_case.execute(
+                blog_id=blog_id,
+                user_id=user_id,
+                per_page=10,
+                page_number=1
             )
         
         except PermissionError as e:

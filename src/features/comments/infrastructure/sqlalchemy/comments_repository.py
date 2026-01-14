@@ -1,7 +1,7 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime, Boolean, func, update
+from sqlalchemy import Column, String, ForeignKey, DateTime, Boolean, func, update, select
 from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
-from src.features.comments.domain.entities import Comment
+from src.features.comments.domain import entities, comment_repository
 from src.persistence.infrastructure.sqlalchemy.data_repository import SqlAlchemyDataRepository, Base
 
 class SqlAlchemyComment(Base):
@@ -13,10 +13,46 @@ class SqlAlchemyComment(Base):
     approved = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-
-class SqlAlchemyCommentsRepository(SqlAlchemyDataRepository[Comment, SqlAlchemyComment]):
+class SqlAlchemyCommentsRepository(
+    SqlAlchemyDataRepository[entities.Comment, SqlAlchemyComment], 
+    comment_repository.CommentRepository
+):
     def __init__(self):
         super().__init__(SqlAlchemyComment)
+
+    def get_by_blog(
+        self, 
+        key, 
+        values, 
+        secondary_key = None, 
+        secondary_value = None, 
+        limit=None, offset=0, 
+        order_by=None, 
+        desc=False
+    ):
+        if secondary_key:
+            if not secondary_value:
+                raise ValueError("Value for adn_key required")
+            
+            stmt = select(self.model).where(getattr(self.model, key).in_(values)).where(getattr(self.model, secondary_key) == secondary_value)
+
+        else:
+            stmt = select(self.model).where(getattr(self.model, key).in_(values))
+
+        if order_by:
+            col = getattr(self.model, order_by)
+            if desc:
+                stmt = stmt.order_by(col.desc())
+            else:
+                stmt = stmt.order_by(col.asc())
+        if limit is not None:
+            stmt = stmt.limit(limit)
+        if offset:
+            stmt = stmt.offset(offset)
+        
+        with self._get_session() as db:
+            results = db.execute(stmt).scalars().all()
+            return [self._to_entity(result) for result in results]
 
     def update_many(self, key, value, changes):
         stmt = update(self.model).where(getattr(self.model, key) == value).values(**changes).returning(*self.model.__table__.c)
@@ -41,7 +77,7 @@ class SqlAlchemyCommentsRepository(SqlAlchemyDataRepository[Comment, SqlAlchemyC
 
     
     def _to_entity(self, model: SqlAlchemyComment):
-        return Comment(
+        return entities.Comment(
             comment_id=model.comment_id,
             post_id=model.post_id,
             text=model.text,

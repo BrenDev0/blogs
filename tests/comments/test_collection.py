@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import Mock
 from uuid import uuid4
 from datetime import datetime
-from src.features.comments.application.use_cases.collection import CommentsCollection
+from src.features.comments.application.use_cases.collection_by_post import CommentsCollectionByPost
 from src.features.comments.domain.entities import Comment
 from src.features.posts.domain.entities import BlogPost, Blog
 from src.persistence.domain.exceptions import NotFoundException
@@ -21,7 +21,7 @@ def use_case(
     mock_comment_repository,
     mock_post_repository
 ):
-    return CommentsCollection(
+    return CommentsCollectionByPost(
         comment_repository=mock_comment_repository,
         post_repositry=mock_post_repository
     )
@@ -29,7 +29,7 @@ def use_case(
 def test_success_only_approved(
     mock_comment_repository,
     mock_post_repository,
-    use_case: CommentsCollection
+    use_case: CommentsCollectionByPost
 ):
     post_id = uuid4()
     fake_comments = [
@@ -66,7 +66,7 @@ def test_success_only_approved(
 def test_success_include_unapproved(
     mock_comment_repository,
     mock_post_repository,
-    use_case: CommentsCollection
+    use_case: CommentsCollectionByPost
 ):
     post_id = uuid4()
     user_id = uuid4()
@@ -132,7 +132,7 @@ def test_success_include_unapproved(
 def test_no_results(
     mock_comment_repository,
     mock_post_repository,
-    use_case: CommentsCollection
+    use_case: CommentsCollectionByPost
 ):
     post_id = uuid4()
     mock_comment_repository.get_many.return_value = None
@@ -152,7 +152,7 @@ def test_no_results(
 def test_permission_error(
     mock_comment_repository,
     mock_post_repository,
-    use_case: CommentsCollection
+    use_case: CommentsCollectionByPost
 ):
     post_id = uuid4()
     user_id = uuid4()
@@ -211,7 +211,7 @@ def test_permission_error(
 def test_post_not_found(
     mock_comment_repository,
     mock_post_repository,
-    use_case: CommentsCollection
+    use_case: CommentsCollectionByPost
 ):
     post_id = uuid4()
     user_id = uuid4()

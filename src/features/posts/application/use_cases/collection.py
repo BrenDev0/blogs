@@ -14,11 +14,11 @@ class GetBlogPostCollection:
     
     def execute(
         self,
+        per_page: int,
+        page_number: int,
         blog_id: UUID,
         user_id: UUID = None,
         category_id: UUID = None,
-        per_page: int = 10,
-        page_number: int = 1,
         include_drafts: bool = False
     ):
         offset = (page_number - 1) * per_page

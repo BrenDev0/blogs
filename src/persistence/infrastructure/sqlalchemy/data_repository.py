@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update, delete, Engine, create_engine, and_
 from sqlalchemy.orm import sessionmaker
-from typing import TypeVar, Generic, Type, List, Optional, Generator
+from typing import TypeVar, Generic, Type, List, Optional, Generator, Union
 import uuid
 from sqlalchemy.orm import DeclarativeBase
 from src.persistence.domain.data_repository import DataRepository
@@ -78,7 +78,7 @@ class SqlAlchemyDataRepository(DataRepository[E], Generic[E, M]):
     def get_many(
         self,
         key: str, 
-        value: str | uuid.UUID,
+        value: Union[str, uuid.UUID, List[Union[str, uuid.UUID]]],
         secondary_key: str = None,
         secondary_value: str | uuid.UUID = None, 
         limit: int = None, 
@@ -90,10 +90,16 @@ class SqlAlchemyDataRepository(DataRepository[E], Generic[E, M]):
             if not secondary_value:
                 raise ValueError("Value for adn_key required")
             
-            stmt = select(self.model).where(getattr(self.model, key) == value).where(getattr(self.model, secondary_key) == secondary_value)
+            if isinstance(value, List):
+                stmt = select(self.model).where(getattr(self.model, key).in_(value)).where(getattr(self.model, secondary_key) == secondary_value)
+            else:
+                stmt = select(self.model).where(getattr(self.model, key) == value).where(getattr(self.model, secondary_key) == secondary_value)
 
         else:
-            stmt = select(self.model).where(getattr(self.model, key) == value)
+            if isinstance(value, List):
+                stmt = select(self.model).where(getattr(self.model, key).in_(value))
+            else:
+                stmt = select(self.model).where(getattr(self.model, key) == value)
 
         if order_by:
             col = getattr(self.model, order_by)

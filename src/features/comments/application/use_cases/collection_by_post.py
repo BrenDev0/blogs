@@ -5,7 +5,7 @@ from src.security.domain.exceptions import PermissionsException
 from src.features.comments.domain import entities, schemas, comment_repository
 from src.features.posts.domain.entities import BlogPost
 
-class CommentsCollection:
+class CommentsCollectionByPost:
     def __init__(
         self,
         comment_repository: comment_repository.CommentRepository,
@@ -16,13 +16,19 @@ class CommentsCollection:
 
     def execute(
         self,
+        per_page: int,
+        page_number: int,
         post_id: UUID,
         user_id: UUID = None,
-        include_unapproved: bool = False  
+        include_unapproved: bool = False
+       
     ):
+        offset = (page_number - 1) * per_page
         comments: List[entities.Comment] = self.__comment_repository.get_many(
             key="post_id",
-            value=post_id
+            value=post_id,
+            limit=per_page,
+            offset=offset
         )
 
         if not comments:
