@@ -18,7 +18,8 @@ def get_create_category_use_case() -> create.CreateCategory:
     
     except DependencyNotRegistered:
         use_case = create.CreateCategory(
-            repository=get_category_repository()
+            category_repository=get_category_repository(),
+            blogs_repository=get_blog_repository()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")
@@ -33,7 +34,8 @@ def get_delete_category_use_case() -> delete.DeleteCategory:
     
     except DependencyNotRegistered:
         use_case = delete.DeleteCategory(
-            repository=get_category_repository()
+            category_repository=get_category_repository(),
+            blog_repository=get_blog_repository()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")
@@ -47,7 +49,8 @@ def get_update_category_use_case() -> update.UpdateCategory:
     
     except DependencyNotRegistered:
         use_case = update.UpdateCategory(
-            repository=get_category_repository()
+            category_repository=get_category_repository(),
+            blog_repository=get_blog_repository()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")

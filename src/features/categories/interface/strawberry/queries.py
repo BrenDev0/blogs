@@ -13,7 +13,7 @@ class CategoryQueries:
     @strawberry.field(
         description="Get all categories. **Uprotected route**"
     )
-    def categories_collection(
+    def public_collection(
         self,
         blog_id: UUID
     ) -> List[CategoryType]:
