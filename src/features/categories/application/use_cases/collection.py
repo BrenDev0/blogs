@@ -27,8 +27,8 @@ class GetCategoryCollection:
             raise exceptions.NotFoundException("Blog not found")
 
         categories = self.__category_repository.get_many(
-            key="user_id",
-            value=blog.user_id
+            key="blog_id",
+            value=blog.blog_id
         )
 
         return [
