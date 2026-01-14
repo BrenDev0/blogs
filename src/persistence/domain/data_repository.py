@@ -1,6 +1,6 @@
 from abc  import ABC, abstractmethod
 import uuid
-from typing  import List, Optional, TypeVar, Generic
+from typing  import List, Dict, Any, TypeVar, Generic
 
 T = TypeVar('T')
 
@@ -10,7 +10,7 @@ class DataRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def get_one(self, key: str, value: str | uuid.UUID) -> Optional[T]:
+    def get_one(self, key: str, value: str | uuid.UUID) -> T | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -31,7 +31,7 @@ class DataRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, key: str, value: str | uuid.UUID, changes: dict) -> Optional[T]:
+    def update(self, key: str, value: str | uuid.UUID, changes: Dict[str, Any]) -> T | None:
         raise NotImplementedError
 
     @abstractmethod
