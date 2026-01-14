@@ -42,7 +42,7 @@ class CommentMutations:
             )
         
         except NotFoundException as e:
-            raise 
+            raise GraphQlException(str(e))
         
         except Exception as e:
             logger.error(str(e))

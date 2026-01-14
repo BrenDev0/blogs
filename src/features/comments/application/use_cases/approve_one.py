@@ -55,4 +55,6 @@ class ApproveComment:
             changes=changes
         )
 
+
+
         return schemas.CommentPublic.model_validate(updated_comment, from_attributes=True)

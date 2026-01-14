@@ -9,10 +9,10 @@ class CommentsCollection:
     def __init__(
         self,
         comment_repository: comment_repository.CommentRepository,
-        post_repositry: data_repository.DataRepository
+        post_repository: data_repository.DataRepository
     ):
         self.__comment_repository = comment_repository
-        self.__post_repository = post_repositry
+        self.__post_repository = post_repository
 
     def execute(
         self,

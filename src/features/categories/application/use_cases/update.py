@@ -4,7 +4,6 @@ from src.security.domain.exceptions import PermissionsException
 from src.features.categories.domain import entities, schemas
 from src.features.blogs.domain.entities import Blog
 
-
 class UpdateCategory:
     def __init__(
         self,

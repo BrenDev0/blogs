@@ -18,7 +18,7 @@ class SqlAlchemyCommentsRepository(SqlAlchemyDataRepository[Comment, SqlAlchemyC
     def __init__(self):
         super().__init__(SqlAlchemyComment)
 
-    def update(self, key, value, changes):
+    def update_many(self, key, value, changes):
         stmt = update(self.model).where(getattr(self.model, key) == value).values(**changes).returning(*self.model.__table__.c)
 
         with self._get_session() as db:
