@@ -14,7 +14,7 @@ class CategoryBase(BaseModel):
 
 class CategoryPublic(CategoryBase):
     category_id: UUID
-    user_id: UUID
+    blog_id: UUID
     name: str
     created_at: datetime
 
