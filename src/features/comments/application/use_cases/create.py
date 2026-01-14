@@ -28,6 +28,7 @@ class CreateComment:
 
         data = entities.Comment(
             **comment.model_dump(exclude_none=True),
+            post_id=post_id,
             approved=False
         )
 

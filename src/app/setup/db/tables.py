@@ -3,6 +3,7 @@ from src.app.setup.db.engine import get_engine
 from src.features.users.infrastructure.sqlalchemy.user_repository import SqlAlchemyUser
 from src.features.blogs.infrastructure.sqlalchemy.blogs_repository import SqlAlchemyBlog
 
+
 from src.persistence.infrastructure.sqlalchemy.data_repository import Base
 logger = logging.getLogger(__name__)
 

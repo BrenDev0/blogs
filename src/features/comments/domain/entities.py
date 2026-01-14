@@ -8,4 +8,4 @@ class Comment(BaseModel):
     post_id: UUID
     text: str
     approved: bool
-    created_at: datetime
+    created_at: Optional[datetime] = None

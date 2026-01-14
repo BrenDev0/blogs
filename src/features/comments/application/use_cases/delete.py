@@ -3,7 +3,8 @@ from src.persistence.domain import data_repository, exceptions
 from src.features.comments.domain import entities, schemas, comment_repository
 from src.security.domain.exceptions import PermissionsException
 from src.features.posts.domain.entities import BlogPost
-class ApproveComment:
+
+class DeleteComment:
     def __init__(
         self,
         comment_repository: comment_repository.CommentRepository,
