@@ -23,6 +23,7 @@ class CategoryMutation:
     @validate_input_to_model
     def create_category(
         self,
+        blog_id: UUID,
         info: strawberry.Info,
         input: inputs.CreateCategoryInput
     ) -> types.CategoryType:
@@ -31,6 +32,7 @@ class CategoryMutation:
         
         try:
             return use_case.execute(
+                blog_id=blog_id,
                 user_id=user_id,
                 req_data=input
             )

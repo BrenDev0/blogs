@@ -8,7 +8,7 @@ class SqlAlchemyCategory(Base):
     __tablename__ = "categories"
 
     category_id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    blog_id = Column(UUID(as_uuid=True), ForeignKey("blogs.blog_id", ondelete="CASCADE"), nullable=False)
     name = Column(String, nullable=False)
     create_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
@@ -20,7 +20,7 @@ class SqlAlcheyCategoryRepository(SqlAlchemyDataRepository[Category, SqlAlchemyC
     def _to_entity(self, model: SqlAlchemyCategory):
         return Category(
             category_id=model.category_id,
-            user_id=model.user_id,
+            blog_id=model.blog_id,
             name=model.name,
             created_at=model.create_at
         )
