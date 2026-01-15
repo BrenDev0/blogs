@@ -14,5 +14,6 @@ class BlogPost(BaseModel):
     content_2: Optional[str] = None
     published: Optional[bool] = False
     published_at: Optional[datetime] = None
+    allow_comments: Optional[bool] = False
     created_at: Optional[datetime] = None
     blog: Optional[Blog] = None

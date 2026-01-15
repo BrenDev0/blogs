@@ -17,6 +17,7 @@ class SqlAlchemyBlogPost(Base):
     title = Column(String, nullable=False)
     content_1 = Column(String, nullable=True)
     content_2 = Column(String, nullable=True)
+    allow_comments = Column(Boolean, nullable=False, default=False)
     published = Column(Boolean, nullable=False, default=False)
     published_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -35,6 +36,7 @@ class SqlAlchemyBlogPostRepository(SqlAlchemyDataRepository[BlogPost, SqlAlchemy
             title=model.title,
             content_1=model.content_1,
             content_2=model.content_2,
+            allow_comments=model.allow_comments,
             published=model.published,
             published_at=model.published_at,
             created_at=model.created_at,

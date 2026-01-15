@@ -41,7 +41,7 @@ class CommentMutations:
                 comment=input
             )
         
-        except NotFoundException as e:
+        except (NotFoundException, PermissionsException) as e:
             raise GraphQlException(str(e))
         
         except Exception as e:

@@ -1,6 +1,8 @@
 from uuid import UUID
 from src.persistence.domain import data_repository, exceptions
 from src.features.comments.domain import entities, schemas, comment_repository
+from  src.features.posts.domain.entities import BlogPost
+from src.security.domain.exceptions import PermissionsException
 
 
 class CreateComment:
@@ -17,7 +19,7 @@ class CreateComment:
         post_id: UUID,
         comment: schemas.CreateCommentRequest
     ):
-        post = self.__post_repository.get_one(
+        post: BlogPost = self.__post_repository.get_one(
             key="post_id",
             value=post_id
         )
@@ -25,6 +27,8 @@ class CreateComment:
         if not post:
             raise exceptions.NotFoundException("Post not found")
         
+        if not post.allow_comments:
+            raise PermissionsException("Comments not allowed for selected post")
 
         data = entities.Comment(
             **comment.model_dump(exclude_none=True),
