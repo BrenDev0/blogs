@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Blog Post with Images</title>
+</head>
+<body>
+  <h2>Create Blog Post</h2>
+  <form id="createPostForm">
+    <label>Blog ID (UUID): <input type="text" id="blogId" required></label><br><br>
+    <label>Author: <input type="text" id="author" required></label><br><br>
+    <label>Title: <input type="text" id="title" required></label><br><br>
+    <label>Content 1: <textarea id="content1" required></textarea></label><br><br>
+    <label>Content 2 (optional): <textarea id="content2"></textarea></label><br><br>
+    <label>Published: <input type="checkbox" id="published"></label><br><br>
+    <label>Images (optional): <input type="file" id="images" multiple></label><br><br>
+    <button type="submit">Create Post</button>
+  </form>
+  <pre id="result"></pre>
+
+  <script>
+    document.getElementById('createPostForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const blogId = document.getElementById('blogId').value;
+      const author = document.getElementById('author').value;
+      const title = document.getElementById('title').value;
+      const content1 = document.getElementById('content1').value;
+      const content2 = document.getElementById('content2').value || null;
+      const published = document.getElementById('published').checked;
+      const files = document.getElementById('images').files;
+
+      const query = `
+        mutation CreateBlogPost($blogId: UUID!, $input: CreateBlogPostInput!, $images: [Upload!]) {
+          blogPosts {
+            createBlogPost(blogId: $blogId, input: $input, images: $images) {
+              postId
+              blogId
+              author
+              title
+              content1
+              content2
+              published
+              createdAt
+            }
+          }
+        }
+      `;
+
+      const formData = new FormData();
+      
+      // Build variables - images will be null placeholders
+      const variables = {
+        blogId,
+        input: {
+          author,
+          title,
+          content1,
+          content2,
+          published
+        },
+        images: files.length > 0 ? Array.from({length: files.length}).fill(null) : null
+      };
+
+      formData.append('operations', JSON.stringify({
+        query,
+        variables
+      }));
+
+      // Map files to variables
+      if (files.length > 0) {
+        const map = {};
+        for (let i = 0; i < files.length; i++) {
+          map[i] = [`variables.images.${i}`];
+        }
+        formData.append('map', JSON.stringify(map));
+
+        // Append files
+        for (let i = 0; i < files.length; i++) {
+          formData.append(i, files[i]);
+        }
+      } else {
+        formData.append('map', JSON.stringify({}));
+      }
+
+      const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2M2MmYwY2EtNTE3ZC00ZmMzLWJjNjQtYmE5YmQ2ZjMwNWNjIiwiZXhwIjoxNzY4NTg2NDE3fQ.Zco-FrNP4dabO4z5vUxddwnXRO2P7ylZgIyU75kR3-U'
+        }
+      });
+
+      let resultText;
+      try {
+        resultText = await res.text();
+        document.getElementById('result').textContent = JSON.stringify(JSON.parse(resultText), null, 2);
+      } catch (err) {
+        document.getElementById('result').textContent = resultText;
+      }
+    });
+  </script>
+</body>
+</html>

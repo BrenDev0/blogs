@@ -23,7 +23,7 @@ class ImageMutaions:
         post_id: UUID,
         images: List[Upload],
         info: strawberry.Info
-    ) -> List[types.UploadType]:
+    ) -> types.UploadType:
         user_id = info.context.get("user_id")
         use_case = use_cases.get_upload_image_use_case()
         content_rule = business_rules.get_supported_content_type_rule()
@@ -52,12 +52,12 @@ class ImageMutaions:
                     errors.append(e)
                     continue
             
-            return {
-                "success": uploaded_images,
-                "failed": errors
-            }
+            return types.UploadType(
+                success=uploaded_images,
+                failed=errors
+            )
                 
-        except (NotFoundException, PermissionsException, ImageUploadException) as e:
+        except (NotFoundException, PermissionsException, ImageUploadException, UnsuportedContentType) as e:
             raise GraphQlException(str(e))
         
         except Exception as e:

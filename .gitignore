@@ -9,3 +9,4 @@ wheels/
 *.egg-info
 
 dev.py
+test_upload.html

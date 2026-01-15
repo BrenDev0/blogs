@@ -61,32 +61,3 @@ class CommentQueries:
             logger.error(str(e))
             raise GraphQlException()
         
-    
-    @strawberry.field(
-        permission_classes=[UserAuth],
-        description=
-        """
-        Get all comments by blog.
-        """
-    )
-    def private_blog_collection(
-        blog_id: UUID,
-        info: strawberry.Info
-    ) -> List[CommentType]:
-        try:
-            user_id = info.context.get("user_id")
-            use_case = get_comment_collection_by_blog_use_case()
-
-            return use_case.execute(
-                blog_id=blog_id,
-                user_id=user_id,
-                per_page=10,
-                page_number=1
-            )
-        
-        except PermissionError as e:
-            raise GraphQlException(e)
-
-        except Exception as e:
-            logger.error(str(e))
-            raise GraphQlException()
