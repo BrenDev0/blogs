@@ -3,13 +3,13 @@ from src.di.container import Container
 from src.di.domain.exceptions import DependencyNotRegistered
 from src.features.comments.dependencies.repositories import get_comment_repository
 from src.features.posts.dependencies.repositories import get_post_repository
+from src.types.dependencies.services import get_type_validation_service
 from src.features.comments.application.use_cases import (
-    collection_by_post,
+    collection,
     create,
     approve_all,
     approve_one,
-    delete,
-    collection_by_blog
+    delete
 )
 logger = logging.getLogger(__name__)
 
@@ -74,30 +74,17 @@ def get_approve_all_comments_use_case() -> approve_all.ApproveAllComments:
     return use_case
 
 
-def get_comment_collection_use_case() -> collection_by_post.CommentsCollectionByPost:
+
+def get_comment_collection_use_case() -> collection.CommentsCollection:
     try:
         instance_key = "comment_collection_use_case"
         use_case = Container.resolve(instance_key)
 
     except DependencyNotRegistered:
-        use_case = collection_by_post.CommentsCollection(
+        use_case = collection.CommentsCollection(
             comment_repository=get_comment_repository(),
-            post_repository=get_post_repository()
-        )
-        Container.register(instance_key, use_case)
-        logger.debug(f"{instance_key} registered")
-
-    return use_case
-
-def get_comment_collection_by_blog_use_case() -> collection_by_blog.CommentsCollection:
-    try:
-        instance_key = "comment_collection_by_blog_use_case"
-        use_case = Container.resolve(instance_key)
-
-    except DependencyNotRegistered:
-        use_case = collection_by_blog.CommentsCollection(
-            comment_repository=get_comment_repository(),
-            post_repository=get_post_repository()
+            post_repository=get_post_repository(),
+            type_validation_service=get_type_validation_service()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")

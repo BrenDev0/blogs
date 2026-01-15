@@ -1,13 +1,13 @@
 from uuid import UUID
 from typing import List
-from src.persistence.domain.data_repository import DataRepository
+from src.persistence.domain import data_repository, exceptions
 from src.security.domain.exceptions import PermissionsException
 from src.features.posts.domain import entities, schemas
 
 class GetBlogPostCollection:
     def __init__(
         self,
-        post_repository: DataRepository
+        post_repository: data_repository.DataRepository
     ):
         self.__post_repository = post_repository
 
@@ -21,6 +21,9 @@ class GetBlogPostCollection:
         category_id: UUID = None,
         include_drafts: bool = False
     ):
+        if page_number < 1:
+            raise exceptions.PagationException()
+        
         offset = (page_number - 1) * per_page
 
         if category_id:

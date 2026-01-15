@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 from uuid import UUID
+from  typing import Optional, Union
 from datetime import datetime
 
 class CommentConfig(BaseModel):
@@ -20,4 +21,3 @@ class CommentPublic(CommentConfig):
 
 class CreateCommentRequest(CommentConfig):
     text: str
-

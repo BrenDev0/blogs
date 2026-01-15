@@ -20,40 +20,6 @@ class SqlAlchemyCommentsRepository(
     def __init__(self):
         super().__init__(SqlAlchemyComment)
 
-    def get_by_blog(
-        self, 
-        key, 
-        values, 
-        secondary_key = None, 
-        secondary_value = None, 
-        limit=None, offset=0, 
-        order_by=None, 
-        desc=False
-    ):
-        if secondary_key:
-            if not secondary_value:
-                raise ValueError("Value for adn_key required")
-            
-            stmt = select(self.model).where(getattr(self.model, key).in_(values)).where(getattr(self.model, secondary_key) == secondary_value)
-
-        else:
-            stmt = select(self.model).where(getattr(self.model, key).in_(values))
-
-        if order_by:
-            col = getattr(self.model, order_by)
-            if desc:
-                stmt = stmt.order_by(col.desc())
-            else:
-                stmt = stmt.order_by(col.asc())
-        if limit is not None:
-            stmt = stmt.limit(limit)
-        if offset:
-            stmt = stmt.offset(offset)
-        
-        with self._get_session() as db:
-            results = db.execute(stmt).scalars().all()
-            return [self._to_entity(result) for result in results]
-
     def update_many(self, key, value, changes):
         stmt = update(self.model).where(getattr(self.model, key) == value).values(**changes).returning(*self.model.__table__.c)
 

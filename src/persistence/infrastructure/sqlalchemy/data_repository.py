@@ -80,14 +80,14 @@ class SqlAlchemyDataRepository(DataRepository[E], Generic[E, M]):
         key: str, 
         value: Union[str, uuid.UUID, List[Union[str, uuid.UUID]]],
         secondary_key: str = None,
-        secondary_value: str | uuid.UUID = None, 
+        secondary_value: Union[str, uuid.UUID, int, bool]= None, 
         limit: int = None, 
         offset: int = 0,
         order_by=None, 
         desc: bool = False
     ) -> List[E]:
         if secondary_key:
-            if not secondary_value:
+            if secondary_value is None:
                 raise ValueError("Value for adn_key required")
             
             if isinstance(value, List):
