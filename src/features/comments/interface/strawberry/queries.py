@@ -72,7 +72,20 @@ class CommentQueries:
         permission_classes=[UserAuth],
         description=
         """
-        Get all comments.
+        scope: breadth of the search, (blog, or post)\n
+        scopeId: postId or blogId\n
+        filterResults as true will  give the option to filter for approved and unapproved posts\n
+        ex: \n
+        {
+            scope: "blog",
+            scopeId: "9b2e462f-1f67-459b-8f15-05546fb7bada",
+            perPage: 10,
+            pageNumber: 1,
+            filterResults: true,
+            filter: "approved",
+            filterValue: "true"
+        }\n
+        will get all comments from all posts in the blog that are approved
         """
     )
     def private_collection(
