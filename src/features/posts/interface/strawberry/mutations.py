@@ -15,7 +15,8 @@ from src.features.posts.dependencies.use_cases import (
     get_delete_blog_post_use_case,
     get_update_blog_post_use_case
 )
-from src.features.images.dependencies.use_cases import get_upload_image_use_case
+from src.features.images.dependencies import use_cases, business_rules
+from src.features.images.domain.exceptions import UnsuportedContentType
 logger = logging.getLogger(__name__)
 
 @strawberry.type
@@ -31,7 +32,7 @@ class BlogPostMutations:
         info: strawberry.Info,
         input: inputs.CreateBlogPostInput,
         images: List[Upload] | None = None,
-    ) -> types.BlogPostType:
+    ) -> types.BlogPostType | types.BlogPostWithUploadType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_post_use_case()
 
@@ -43,17 +44,36 @@ class BlogPostMutations:
             )
 
             if images:
-                upload_use_case = get_upload_image_use_case()
-                for image in images:
-                    file_type = image.content_type
-                    file_bytes = await image.read()
+                upload_use_case = use_cases.get_upload_image_use_case()
+                uploaded_images = []
+                errors = []
                 
-                    upload_use_case.execute(
-                        user_id=user_id,
-                        post_id=new_post.post_id,
-                        file_bytes=file_bytes,
-                        content_type=file_type
-                    )
+                for image in images:
+                    content_type = image.content_type
+                    filename = image.filename.lower().replace(" ", "_")
+
+                    business_rules.content_rule.validate(content_type=content_type, filename=filename) # validate supported content type
+                    
+                    file_bytes = await image.read()
+                    
+                    try:
+                        new_image = upload_use_case.execute(
+                            user_id=user_id,
+                            post_id=new_post.post_id,
+                            file_bytes=file_bytes,
+                            content_type=content_type
+                        )
+
+                        uploaded_images.append(new_image)
+                        
+                    except UnsuportedContentType as e:
+                        errors.append(e)
+                        continue
+                return types.BlogPostWithUploadType(
+                    post=new_post,
+                    images=uploaded_images,
+                    failed_uploads=errors
+                )
 
             return new_post
         
