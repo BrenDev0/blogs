@@ -34,6 +34,10 @@ class UpdateUserRequest(UserShemaBase):
     password: Optional[str] = None
     old_password: Optional[str] = None
 
+class VerifiedUserUpdateRequest(UserShemaBase):
+    email: Optional[str] = None
+    password: Optional[str] = None
+
 class LoginRequest(UserShemaBase):
     email: str
     password: str
