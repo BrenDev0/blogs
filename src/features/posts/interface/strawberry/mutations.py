@@ -13,7 +13,8 @@ from src.features.posts.interface.strawberry import types, inputs
 from src.features.posts.dependencies.use_cases import (
     get_create_blog_post_use_case,
     get_delete_blog_post_use_case,
-    get_update_blog_post_use_case
+    get_update_blog_post_use_case,
+    get_like_post_use_case
 )
 from src.features.images.dependencies import use_cases, business_rules
 from src.features.images.domain.exceptions import UnsuportedContentType
@@ -131,6 +132,27 @@ class BlogPostMutations:
             )
         
         except (PermissionsException, NotFoundException) as e:
+            raise GraphQlException(str(e))
+        
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+    
+    @strawberry.mutation(
+        description="Like blog post **UNPROTECTED**"
+    )
+    def public_like_post(
+        self,
+        post_id: UUID
+    ) -> None:
+        try:
+            use_case = get_like_post_use_case()
+
+            return use_case.execute(
+                post_id=post_id
+            )
+        
+        except NotFoundException as e:
             raise GraphQlException(str(e))
         
         except Exception as e:

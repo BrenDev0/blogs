@@ -5,7 +5,8 @@ from src.features.posts.application.use_cases import (
     collection,
     create,
     delete,
-    update
+    update,
+    like_post
 )
 from src.features.posts.dependencies.repositories import get_post_repository
 from src.features.blogs.dependencies.repositories import get_blog_repository
@@ -64,6 +65,21 @@ def get_update_blog_post_use_case() -> update.UpdateBlogPost:
         use_case = update.UpdateBlogPost(
             post_repository=get_post_repository()
         )
+        Container.register(instance_key, use_case)
+        logger.debug(f"{instance_key} registered")
+
+    return use_case
+
+def get_like_post_use_case() -> like_post.LikePost:
+    try:
+        instance_key = "like_post_use_case",
+        use_case = Container.resolve(instance_key)
+    
+    except DependencyNotRegistered:
+        use_case = like_post.LikePost(
+            post_repository=get_post_repository()
+        )
+
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")
 

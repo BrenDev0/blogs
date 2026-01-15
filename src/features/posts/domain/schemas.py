@@ -23,6 +23,7 @@ class BlogPostPublic(BlogPostConfig):
     content_2: Optional[str] = None
     published: Optional[bool] = False
     allow_comments: bool
+    likes: int
     published_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
 

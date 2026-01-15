@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update, delete, Engine, create_engine, and_
 from sqlalchemy.orm import sessionmaker
-from typing import TypeVar, Generic, Type, List, Optional, Generator, Union
+from typing import TypeVar, Generic, Type, List, Optional, Generator, Union, Dict, Any
 import uuid
 from sqlalchemy.orm import DeclarativeBase
 from src.persistence.domain.data_repository import DataRepository
@@ -123,7 +123,7 @@ class SqlAlchemyDataRepository(DataRepository[E], Generic[E, M]):
             results = db.execute(stmt).scalars().all()
             return [self._to_entity(result) for result in results]
 
-    def update(self, key: str, value: str | uuid.UUID, changes: dict) -> Optional[E]:
+    def update(self, key: str, value: Union[str, uuid.UUID], changes: Dict[str, Any]) -> Optional[E]:
         stmt = update(self.model).where(getattr(self.model, key) == value).values(**changes).returning(*self.model.__table__.c)
 
         with self._get_session() as db:
@@ -139,7 +139,7 @@ class SqlAlchemyDataRepository(DataRepository[E], Generic[E, M]):
             updated_model = self.model(**updated_rows[0]._mapping)
             return self._to_entity(updated_model)
 
-    def delete(self, key: str, value: str | uuid.UUID) ->  E | None:
+    def delete(self, key: str, value: Union[str, uuid.UUID]) ->  E | None:
         stmt = delete(self.model).where(getattr(self.model, key) == value).returning(*self.model.__table__.c)
 
         with self._get_session() as db:
