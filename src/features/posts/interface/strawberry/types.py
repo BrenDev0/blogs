@@ -8,7 +8,7 @@ from src.features.images.interface.strawberry.types import ImageType
 class BlogPostType: 
     pass
 
-@strawberry
+@strawberry.type
 class BlogPostWithUploadType:
     post: BlogPostType
     images: List[ImageType]
