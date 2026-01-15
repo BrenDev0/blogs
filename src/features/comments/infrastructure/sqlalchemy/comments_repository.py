@@ -1,7 +1,7 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime, Boolean, func, update
+from sqlalchemy import Column, String, ForeignKey, DateTime, Boolean, func, update, select
 from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
-from src.features.comments.domain.entities import Comment
+from src.features.comments.domain import entities, comment_repository
 from src.persistence.infrastructure.sqlalchemy.data_repository import SqlAlchemyDataRepository, Base
 
 class SqlAlchemyComment(Base):
@@ -13,8 +13,10 @@ class SqlAlchemyComment(Base):
     approved = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-
-class SqlAlchemyCommentsRepository(SqlAlchemyDataRepository[Comment, SqlAlchemyComment]):
+class SqlAlchemyCommentsRepository(
+    SqlAlchemyDataRepository[entities.Comment, SqlAlchemyComment], 
+    comment_repository.CommentRepository
+):
     def __init__(self):
         super().__init__(SqlAlchemyComment)
 
@@ -41,7 +43,7 @@ class SqlAlchemyCommentsRepository(SqlAlchemyDataRepository[Comment, SqlAlchemyC
 
     
     def _to_entity(self, model: SqlAlchemyComment):
-        return Comment(
+        return entities.Comment(
             comment_id=model.comment_id,
             post_id=model.post_id,
             text=model.text,

@@ -10,5 +10,6 @@ def get_strawberry_graphql_router():
     
     return GraphQLRouter(
         schema,
-        path="/graphql"
+        path="/graphql",
+        multipart_uploads_enabled=True
     )

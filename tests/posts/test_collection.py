@@ -68,6 +68,8 @@ def test_success_no_drafts(
     mock_repistory.get_many.return_value = fake_collection
     
     result = use_case.execute(
+        per_page=10,
+        page_number=1,
         blog_id=blog_id,
         include_drafts=False
     )
@@ -118,6 +120,8 @@ def test_success_with_category(
     mock_repistory.get_many.return_value = fake_collection
 
     result = use_case.execute(
+        per_page=10,
+        page_number=1,
         blog_id=blog_id,
         category_id=category_id,
         include_drafts=False
@@ -184,6 +188,8 @@ def test_success_with_drafts(
     mock_repistory.get_many.return_value = fake_collection
     
     result = use_case.execute(
+        per_page=10,
+        page_number=1,
         user_id=user_id,
         blog_id=blog_id,
         include_drafts=True
@@ -211,6 +217,8 @@ def test_no_results(
     mock_repistory.get_many.return_value = None
     
     result = use_case.execute(
+        per_page=10,
+        page_number=1,
         user_id=user_id,
         blog_id=blog_id,
         include_drafts=False
@@ -275,6 +283,8 @@ def test_permission_error(
     
     with pytest.raises(PermissionsException) as exc_info:
         use_case.execute(
+            per_page=10,
+            page_number=1,
             user_id=user_id,
             blog_id=blog_id,
             include_drafts=True
@@ -288,4 +298,3 @@ def test_permission_error(
     )
 
     assert "Forbidden" in str(exc_info)
-

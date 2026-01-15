@@ -1,26 +1,29 @@
 from uuid import UUID
 from typing import List
-from src.persistence.domain.data_repository import DataRepository
+from src.persistence.domain import data_repository, exceptions
 from src.security.domain.exceptions import PermissionsException
 from src.features.posts.domain import entities, schemas
 
 class GetBlogPostCollection:
     def __init__(
         self,
-        post_repository: DataRepository
+        post_repository: data_repository.DataRepository
     ):
         self.__post_repository = post_repository
 
     
     def execute(
         self,
+        per_page: int,
+        page_number: int,
         blog_id: UUID,
         user_id: UUID = None,
         category_id: UUID = None,
-        per_page: int = 10,
-        page_number: int = 1,
         include_drafts: bool = False
     ):
+        if page_number < 1:
+            raise exceptions.PagationException()
+        
         offset = (page_number - 1) * per_page
 
         if category_id:

@@ -3,9 +3,10 @@ from src.di.container import Container
 from src.di.domain.exceptions import DependencyNotRegistered
 from src.features.comments.dependencies.repositories import get_comment_repository
 from src.features.posts.dependencies.repositories import get_post_repository
+from src.types.dependencies.services import get_type_validation_service
 from src.features.comments.application.use_cases import (
-    create,
     collection,
+    create,
     approve_all,
     approve_one,
     delete
@@ -73,6 +74,7 @@ def get_approve_all_comments_use_case() -> approve_all.ApproveAllComments:
     return use_case
 
 
+
 def get_comment_collection_use_case() -> collection.CommentsCollection:
     try:
         instance_key = "comment_collection_use_case"
@@ -81,7 +83,8 @@ def get_comment_collection_use_case() -> collection.CommentsCollection:
     except DependencyNotRegistered:
         use_case = collection.CommentsCollection(
             comment_repository=get_comment_repository(),
-            post_repository=get_post_repository()
+            post_repository=get_post_repository(),
+            type_validation_service=get_type_validation_service()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")

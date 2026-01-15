@@ -30,7 +30,7 @@ class BlogPostMutations:
         blog_id: UUID,
         info: strawberry.Info,
         input: inputs.CreateBlogPostInput,
-        images: strawberry.Maybe[List[Upload] | None] = None,
+        images: List[Upload] | None = None,
     ) -> types.BlogPostType:
         user_id = info.context.get("user_id")
         use_case = get_create_blog_post_use_case()

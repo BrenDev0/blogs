@@ -5,6 +5,7 @@ from typing import List, Optional
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.security.domain.exceptions import PermissionsException
+from src.persistence.domain.exceptions import PagationException
 from src.features.posts.interface.strawberry import types
 from src.features.posts.dependencies.use_cases import get_blog_post_collection_use_case
 logger = logging.getLogger(__name__)
@@ -45,7 +46,7 @@ class BlogPostQueries:
                     include_drafts=True
                 )
         
-        except PermissionsException as e:
+        except (PermissionsException, PagationException) as e:
             raise GraphQlException(str(e))
         
         except Exception as e:

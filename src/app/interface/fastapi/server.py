@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from src.app.interface.strawberry.router import get_strawberry_graphql_router
 from src.app.interface.fastapi.middleware import hmac
@@ -34,6 +34,26 @@ def create_fastapi_app():
         """
         return {"status": "Blogs ok"}
     
+    @app.get("/test", tags=["Internal"])
+    async def test_upload():
+        import os
+        # Get the absolute path to the root directory
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+        html_path = os.path.join(root_dir, "test_upload.html")
+        with open(html_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+        
+    @app.get("/test_post", tags=["Internal"])
+    async def test_upload():
+        import os
+        # Get the absolute path to the root directory
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+        html_path = os.path.join(root_dir, "test_post_create.html")
+        with open(html_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+        
 
 
     graphql_router = get_strawberry_graphql_router()

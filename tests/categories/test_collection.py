@@ -66,8 +66,8 @@ def test_success(
         value=blog_id
     )
     mock_category_repository.get_many.assert_called_once_with(
-        key="user_id",
-        value=user_id
+        key="blog_id",
+        value=blog_id
     )
     assert isinstance(result, list)
     assert len(result) == 2
@@ -119,8 +119,8 @@ def test_no_results(
         value=blog_id
     )
     mock_category_repository.get_many.assert_called_once_with(
-        key="user_id",
-        value=user_id
+        key="blog_id",
+        value=blog_id
     )
     assert isinstance(result, list)
     assert len(result) == 0
