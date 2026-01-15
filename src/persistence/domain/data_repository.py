@@ -32,10 +32,10 @@ class DataRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, key: str, value: str | UUID, changes: Dict[str, Any]) -> T | None:
+    def update(self, key: str, value: Union[str, UUID], changes: Dict[str, Any]) -> T | None:
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, key: str, value: str | UUID) -> List[T] | T | None:
+    def delete(self, key: str, value: Union[str, UUID]) -> List[T] | T | None:
         raise NotImplementedError
     

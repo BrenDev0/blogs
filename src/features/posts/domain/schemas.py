@@ -22,6 +22,8 @@ class BlogPostPublic(BlogPostConfig):
     content_1: str
     content_2: Optional[str] = None
     published: Optional[bool] = False
+    allow_comments: bool
+    likes: int
     published_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
 
@@ -31,6 +33,7 @@ class CreateBlogPostRequest(BlogPostConfig):
     title: str
     content_1: str
     content_2: Optional[str] = None
+    allow_comments: Optional[bool] = False
     published: Optional[bool] = False
 
 class UpdateBlogPostRequest(BlogPostConfig):
@@ -40,3 +43,4 @@ class UpdateBlogPostRequest(BlogPostConfig):
     content_1: Optional[str] = None
     content_2: Optional[str] = None
     published: Optional[bool] = None
+    allow_comments: Optional[bool] = None
