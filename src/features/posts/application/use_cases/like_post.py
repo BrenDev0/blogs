@@ -26,10 +26,10 @@ class LikePost:
             "likes": int(likes)
         }
 
-        self.__post_repository.update(
+        updated_post = self.__post_repository.update(
             key="post_id",
             value=post.post_id,
             changes=changes
         )
 
-        return
+        return schemas.BlogPostPublic.model_validate(updated_post, from_attributes=True)
