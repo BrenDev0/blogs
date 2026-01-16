@@ -144,7 +144,7 @@ class BlogPostMutations:
     def public_like_post(
         self,
         post_id: UUID
-    ) -> None:
+    ) -> types.BlogPostType:
         try:
             use_case = get_like_post_use_case()
 

@@ -1,40 +1,14 @@
 import strawberry
 from uuid import UUID
-from typing import List, Optional, Annotated, Union
+from typing import List, Optional
 import logging
-import json
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.middleware.user_auth import UserAuth
 from src.persistence.domain.exceptions import InvalidFilterException, InvalidScopeException, PagationException
 from src.security.domain.exceptions import PermissionsException
-from src.features.comments.interface.strawberry import types, inputs
+from src.features.comments.interface.strawberry import types
 from src.features.comments.dependencies.use_cases import get_comment_collection_use_case
 logger = logging.getLogger(__name__)
-
-
-@strawberry.type
-class StringValue:
-    value: str
-
-@strawberry.type
-class IntValue:
-    value: int
-
-@strawberry.type
-class BoolValue:
-    value: bool
-
-@strawberry.type
-class UUIDVAlue:
-    value: UUID
-
-FilterValueUnion = Annotated[
-    Union[str,int, bool],
-    strawberry.union("FilterValueUnion")
-]
-
-
-
 
 @strawberry.type
 class CommentQueries:
@@ -115,7 +89,7 @@ class CommentQueries:
             )
             
         
-        except (PermissionError, InvalidScopeException, InvalidFilterException, PagationException) as e:
+        except (PermissionsException, InvalidScopeException, InvalidFilterException, PagationException) as e:
             raise GraphQlException(str(e))
 
         except Exception as e:
