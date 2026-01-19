@@ -2,11 +2,12 @@ import logging
 import strawberry
 from src.app.domain.exceptions import GraphQlException
 from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
+from src.persistence.domain.exceptions import NotFoundException
 from src.security.dependencies.services import get_web_token_service
 from src.security.utils.random_code_generator import get_random_code
-from src.features.email.interface.strawberry.types import VerificationTokenType, VerifyEmailType
-from src.features.email.dependencies.use_cases import get_verification_email_use_case
-from src.features.users.dependencies.business_rules import get_unique_email_rule
+from src.features.email.interface.strawberry.types import VerificationTokenType, VerifyEmailType, EmailConfirmationType
+from src.features.email.dependencies.use_cases import get_verification_email_use_case, get_account_recovery_email_use_case
+from src.features.users.dependencies.business_rules import get_unique_email_rule, get_user_exists_rule
 from src.features.users.domain.exceptions import EmailInUseException
 logger = logging.getLogger(__name__)
 
@@ -53,3 +54,44 @@ class EmailMutations:
         except Exception as e:
             logger.error(str(e))
             raise GraphQlException()
+        
+    
+    @strawberry.mutation(
+        description="Send account recovery email"
+    )
+    @validate_input_to_model
+    def account_recovery_email(
+        self,
+        input: VerifyEmailType
+    ) -> EmailConfirmationType:
+        try:
+            use_case = get_account_recovery_email_use_case()
+            rule = get_user_exists_rule()
+
+            user = rule.validate(
+                email=input.email
+            )
+
+            web_token_service = get_web_token_service()
+            token_payload = {
+                "user_id": str(user.user_id)
+            } 
+
+            token = web_token_service.generate(payload=token_payload, expiration=86400) # 24 hours
+
+            use_case.execute(
+                to=input.email,
+                token=token
+            )
+
+            return EmailConfirmationType(
+                message="Recovery email sent"
+            )
+
+        except NotFoundException as e:
+            raise GraphQlException(str(e))
+        
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+    

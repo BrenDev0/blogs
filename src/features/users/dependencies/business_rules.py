@@ -3,7 +3,8 @@ from src.di.domain.exceptions import DependencyNotRegistered
 from src.di.container import Container
 from src.features.users.application.rules import (
     unique_email,
-    update_password
+    update_password,
+    user_exists
 )
 from src.features.users.dependencies.repositories import get_user_repository
 from src.security.dependencies.services import get_hashing_service
@@ -32,6 +33,22 @@ def get_unique_email_rule() -> unique_email.UniqueEmailRule:
     
     except DependencyNotRegistered:
         business_rule = unique_email.UniqueEmailRule(
+            repository=get_user_repository(),
+            hashing=get_hashing_service()
+        )
+
+        Container.register(instance_key, business_rule)
+        logger.debug(f"{instance_key} registered")
+
+    return business_rule
+
+def get_user_exists_rule() -> user_exists.UserExists:
+    try:
+        instance_key = "user_exists_rule"
+        business_rule = Container.resolve(instance_key)
+    
+    except DependencyNotRegistered:
+        business_rule = user_exists.UserExists(
             repository=get_user_repository(),
             hashing=get_hashing_service()
         )
