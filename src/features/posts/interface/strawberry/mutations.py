@@ -10,6 +10,7 @@ from src.persistence.domain.exceptions import NotFoundException, UpdateFieldsExc
 from src.features.images.domain.exceptions import ImageUploadException
 from src.security.domain.exceptions import PermissionsException
 from src.features.posts.interface.strawberry import types, inputs
+from src.features.posts.domain.schemas import UpdateBlogPostRequest
 from src.features.posts.dependencies.use_cases import (
     get_create_blog_post_use_case,
     get_delete_blog_post_use_case,
@@ -89,7 +90,6 @@ class BlogPostMutations:
         permission_classes=[UserAuth],
         description="Update blog post by id"
     )
-    @validate_input_to_model
     def update_blog_post(
         self,
         post_id: UUID,
@@ -100,10 +100,17 @@ class BlogPostMutations:
         use_case = get_update_blog_post_use_case()
 
         try:
+            data = {}
+
+            for field, value in vars(input).items():
+                if value is not strawberry.UNSET:
+                    data[field] = value
+
+            changes = UpdateBlogPostRequest(**data)
             return use_case.execute(
                 user_id=user_id,
                 post_id=post_id,
-                changes=input
+                changes=changes
             )
         
         except (PermissionsException, NotFoundException, UpdateFieldsException) as e:
