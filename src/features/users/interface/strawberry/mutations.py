@@ -112,11 +112,11 @@ class UserMutations:
             raise GraphQlException()
         
     @strawberry.mutation(
-        description="Update email",
+        description="Update email, or password for account recovery",
         permission_classes=[user_verification.UserVerification]
     )
     @validate_input_to_model
-    def update_email(
+    def verified_update(
         self,
         info: strawberry.Info,
         input: inputs.VerifiedUserUpdateInput
@@ -129,21 +129,47 @@ class UserMutations:
         if int(input.code) != int(verification_code):
             raise GraphQlException("Unauthorized")
         
+        if input.email and input.password:
+            raise GraphQlException("Cannot update email and password simultaneously")
+        
         try:    
             use_case = get_update_user_use_case()
+            if input.password:
+                rule = get_update_password_rule()
+
+                rule.validate(
+                    user_id=user_id,
+                    new_password=input.password,
+                    current_password_check=False
+                )
 
             changes = UpdateUserSchema(
-                email=input.email
+                **input.model_dump(exclude_none=True, exclude={"code"})
             )
 
             return use_case.execute(
                 user_id=user_id,
                 changes=changes
             )
+        
+        except (NotFoundException, IncorrectPassword, UpdateFieldsException) as e:
+            raise GraphQlException(str(e))
 
         except Exception as e:
             logger.error(str(e))
             raise GraphQlException()
+        
+    
+    # @strawberry.mutation(
+    #     description="Update users password for account recovery",
+    #     permission_classes=[user_auth.UserAuth]
+    # )
+    # def account_recovery_update_password(
+    #     self,
+    #     info: strawberry.Info,
+    #     input: inputs.VerifiedUserUpdateInput
+    # ) -> types.UserWithTokenType:
+    #     pass
 
     @strawberry.mutation(
         description="User login"

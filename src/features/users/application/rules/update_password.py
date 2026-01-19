@@ -17,8 +17,8 @@ class UpdatePasswordRule:
     def validate(
         self,
         user_id: UUID,
-        old_password: str,
         new_password: str,
+        old_password: str = None,
         current_password_check: bool = True
     ):
         user: User = self.__repository.get_one(
@@ -40,7 +40,9 @@ class UpdatePasswordRule:
             raise IncorrectPassword("New password cannot be same as current password")
         
         if current_password_check:
-            # check  if user gave  correct   current password
+            if not old_password:
+                raise ValueError("Old password required for check")
+        
             self.__hashing.compare_password(
                 password=old_password,
                 hashed_password=user.password,
