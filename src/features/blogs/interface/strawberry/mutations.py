@@ -29,10 +29,10 @@ class BlogMutations:
         info: strawberry.Info,
         input: inputs.CreateBlogInput
     ) -> types.BlogType:
-        user_id = info.context.get("user_id")
-        use_case = get_create_blog_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_create_blog_use_case()
+
             return use_case.execute(
                 user_id=user_id,
                 req_data=input
@@ -52,9 +52,10 @@ class BlogMutations:
         info: strawberry.Info,
         blog_id: UUID
     ) -> types.BlogType:
-        user_id = info.context.get("user_id")
-        use_case = get_delete_blog_use_case()
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_delete_blog_use_case()
+
             return use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id
@@ -77,11 +78,11 @@ class BlogMutations:
         info: strawberry.Info,
         blog_id: UUID,
         input: inputs.UpdateBlogInput
-    ) -> types.BlogType:
-        user_id = info.context.get("user_id")
-        use_case = get_update_blog_use_case()
-        
+    ) -> types.BlogType: 
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_update_blog_use_case()
+            
             return use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id,

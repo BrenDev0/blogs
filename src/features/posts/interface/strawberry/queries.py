@@ -24,9 +24,10 @@ class BlogPostQueries:
         category_id: Optional[UUID] = None,
         per_page: Optional[int] = 10
     ) -> List[types.BlogPostType]:
-        user_id = info.context.get("user_id")
-        use_case = get_blog_post_collection_use_case()
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_blog_post_collection_use_case()
+            
             if category_id:
                 return use_case.execute(
                     user_id=user_id,
