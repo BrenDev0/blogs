@@ -100,6 +100,17 @@ class BlogPostMutations:
         use_case = get_update_blog_post_use_case()
 
         try:
+            NULLABLE_FIELDS = {"category_id", "content_1"}
+
+            for field, value in vars(input).items():
+                if value is strawberry.UNSET:
+                    continue
+
+                if value is None and field not in NULLABLE_FIELDS:
+                    raise UpdateFieldsException(
+                        f"Field '{field}' cannot be null"
+                    )
+                
             data = {}
 
             for field, value in vars(input).items():
