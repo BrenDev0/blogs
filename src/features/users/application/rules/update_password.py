@@ -18,7 +18,8 @@ class UpdatePasswordRule:
         self,
         user_id: UUID,
         old_password: str,
-        new_password: str
+        new_password: str,
+        current_password_check: bool = True
     ):
         user: User = self.__repository.get_one(
             key="user_id",
@@ -38,12 +39,15 @@ class UpdatePasswordRule:
         if is_current_password:
             raise IncorrectPassword("New password cannot be same as current password")
         
-        # check  if user gave  correct   current password
-        self.__hashing.compare_password(
-            password=old_password,
-            hashed_password=user.password,
-            detail="Incorrect password",
-            throw_error=True
-        )
+        if current_password_check:
+            # check  if user gave  correct   current password
+            self.__hashing.compare_password(
+                password=old_password,
+                hashed_password=user.password,
+                detail="Incorrect password",
+                throw_error=True
+            )
+            
+        return True
         
         

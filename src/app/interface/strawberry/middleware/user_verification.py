@@ -18,6 +18,11 @@ class UserVerification(BasePermission):
             try:
                 payload = web_token_service.decode(token)
                 verification_code = payload.get("verification_code")
+                user_id = payload.get("user_id")
+
+                if user_id:
+                    info.context["user_id"] = user_id
+                    
                 if verification_code:
                     info.context["verification_code"] = verification_code
                     return True

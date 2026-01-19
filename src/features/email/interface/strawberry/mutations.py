@@ -1,7 +1,7 @@
 import logging
 import strawberry
 from src.app.domain.exceptions import GraphQlException
-from src.app.interface.strawberry.decorators.req_validation import validate_input_to_model
+from src.app.interface.strawberry.decorators import req_validation, gather_context
 from src.persistence.domain.exceptions import NotFoundException
 from src.security.dependencies.services import get_web_token_service
 from src.security.utils.random_code_generator import get_random_code
@@ -17,9 +17,11 @@ class EmailMutations:
     @strawberry.mutation(
         description="Send verification code to users email. Will receive a token that can be used for verified requests."
     )
-    @validate_input_to_model
+    @req_validation.validate_input_to_model
+    @gather_context.inject_strawberry_context
     def verify_email(
         self,
+        info: strawberry.Info,
         input: VerifyEmailType
     ) -> VerificationTokenType:
         use_case = get_verification_email_use_case()
@@ -41,6 +43,12 @@ class EmailMutations:
             token_payload = {
                 "verification_code": code
             }
+
+            user_id = info.context.get("user_id")
+
+            if user_id:
+                token_payload["user_id"] = user_id
+
             verification_token = web_token_service.generate(payload=token_payload, expiration=900) # 15 mins
 
             return VerificationTokenType(
@@ -59,7 +67,7 @@ class EmailMutations:
     @strawberry.mutation(
         description="Send account recovery email"
     )
-    @validate_input_to_model
+    @req_validation.validate_input_to_model
     def account_recovery_email(
         self,
         input: VerifyEmailType

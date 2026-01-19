@@ -26,17 +26,12 @@ class CreateUserRequest(UserShemaBase):
     password: str
 
 class VerifiedUserUpdateRequest(UserShemaBase):
-    email: Optional[str] = None
-    password: Optional[str] = None
+    email: str
 
 class UpdateUserRequest(UserShemaBase):
     name: Optional[str] = None
     password: Optional[str] = None
     old_password: Optional[str] = None
-
-class VerifiedUserUpdateRequest(UserShemaBase):
-    email: Optional[str] = None
-    password: Optional[str] = None
 
 class LoginRequest(UserShemaBase):
     email: str
