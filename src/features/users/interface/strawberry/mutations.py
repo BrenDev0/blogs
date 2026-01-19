@@ -30,12 +30,13 @@ class UserMutations:
         info: strawberry.Info,
         input: inputs.CreateUserInput
     ) -> types.UserWithTokenType:
-        use_case = get_create_user_use_case()
-        web_token_service = get_web_token_service()
+        verification_code = info.context.get("verification_code")
+        if int(input.code) != int(verification_code):
+            raise GraphQlException("Unauthorized")
+        
         try:
-            verification_code = info.context.get("verification_code")
-            if int(input.code) != int(verification_code):
-                raise GraphQlException("Unauthorized")
+            use_case = get_create_user_use_case()
+            web_token_service = get_web_token_service()
             
             new_user = use_case.execute(
                 req_data=input
@@ -69,10 +70,10 @@ class UserMutations:
         info: strawberry.Info,
         input: inputs.UpdateUserInput
     ) -> types.UserType:
-        user_id = info.context.get("user_id")
-        use_case = get_update_user_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_update_user_use_case()
+
             changes = {}
             if input.old_password:
                 if not input.password:
@@ -86,7 +87,8 @@ class UserMutations:
                 rule.validate(
                     user_id=user_id,
                     old_password=input.old_password,
-                    new_password=input.password
+                    new_password=input.password,
+                    current_password_check=True
                 )
 
                 changes["password"] = input.password
@@ -108,6 +110,66 @@ class UserMutations:
         except Exception as e:
             logger.error(str(e))
             raise GraphQlException()
+        
+    @strawberry.mutation(
+        description="Update email, or password for account recovery",
+        permission_classes=[user_verification.UserVerification]
+    )
+    @validate_input_to_model
+    def verified_update(
+        self,
+        info: strawberry.Info,
+        input: inputs.VerifiedUserUpdateInput
+    ) -> types.UserType:
+        user_id = info.context.get("user_id")
+        if not user_id:
+            raise GraphQlException("Forbidden")
+            
+        verification_code = info.context.get("verification_code")
+        if int(input.code) != int(verification_code):
+            raise GraphQlException("Unauthorized")
+        
+        if input.email and input.password:
+            raise GraphQlException("Cannot update email and password simultaneously")
+        
+        try:    
+            use_case = get_update_user_use_case()
+            if input.password:
+                rule = get_update_password_rule()
+
+                rule.validate(
+                    user_id=user_id,
+                    new_password=input.password,
+                    current_password_check=False
+                )
+
+            changes = UpdateUserSchema(
+                **input.model_dump(exclude_none=True, exclude={"code"})
+            )
+
+            return use_case.execute(
+                user_id=user_id,
+                changes=changes
+            )
+        
+        except (NotFoundException, IncorrectPassword, UpdateFieldsException) as e:
+            raise GraphQlException(str(e))
+
+        except Exception as e:
+            logger.error(str(e))
+            raise GraphQlException()
+        
+    
+    # @strawberry.mutation(
+    #     description="Update users password for account recovery",
+    #     permission_classes=[user_auth.UserAuth]
+    # )
+    # def account_recovery_update_password(
+    #     self,
+    #     info: strawberry.Info,
+    #     input: inputs.VerifiedUserUpdateInput
+    # ) -> types.UserWithTokenType:
+    #     pass
 
     @strawberry.mutation(
         description="User login"
@@ -117,10 +179,10 @@ class UserMutations:
         self,
         input: inputs.LoginInput
     ) -> types.UserWithTokenType:
-        use_case = get_login_use_case()
-        web_token_service = get_web_token_service()
-
         try:
+            use_case = get_login_use_case()
+            web_token_service = get_web_token_service()
+
             user = use_case.execute(
                 email=input.email,
                 password=input.password
@@ -155,9 +217,9 @@ class UserMutations:
         self,
         info: strawberry.Info
     ) -> types.UserType:
-        use_case = get_delete_user_use_case()
         try:
             user_id = info.context.get("user_id")
+            use_case = get_delete_user_use_case()
 
             return use_case.execute(
                 user_id=user_id
@@ -169,4 +231,6 @@ class UserMutations:
         except Exception as e:
             logger.error(str(e))
             raise GraphQlException()
+        
+    
 

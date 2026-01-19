@@ -67,7 +67,8 @@ def get_delete_user_use_case() -> delete.DeleteUser:
     
     except DependencyNotRegistered:
         use_case = delete.DeleteUser(
-            repository=get_user_repository()
+            repository=get_user_repository(),
+            encryption=get_encrytpion_service()
         )
         Container.register(instance_key, use_case)
         logger.debug(f"{instance_key} registered")

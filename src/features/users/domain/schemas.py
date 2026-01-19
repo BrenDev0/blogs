@@ -28,6 +28,7 @@ class CreateUserRequest(UserShemaBase):
 class VerifiedUserUpdateRequest(UserShemaBase):
     email: Optional[str] = None
     password: Optional[str] = None
+    code: int
 
 class UpdateUserRequest(UserShemaBase):
     name: Optional[str] = None
