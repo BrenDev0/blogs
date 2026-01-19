@@ -8,3 +8,7 @@ class VerifyEmailType:
 @strawberry.type
 class VerificationTokenType:
     verification_token: str
+
+@strawberry.type
+class EmailConfirmationType:
+    message: str

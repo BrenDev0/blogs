@@ -18,7 +18,7 @@ class UpdateBlogPost:
         post_id: UUID,
         changes: schemas.UpdateBlogPostRequest
     ): 
-        cleaned_changes = changes.model_dump(exclude_none=True, by_alias=False)
+        cleaned_changes = changes.model_dump(exclude_unset=True, by_alias=False)
         if not cleaned_changes:
             raise exceptions.UpdateFieldsException()
         
