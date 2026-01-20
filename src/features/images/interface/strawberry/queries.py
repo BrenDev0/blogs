@@ -21,10 +21,10 @@ class ImageQueries:
         post_id: UUID,
         info: strawberry.Info
     ) -> List[types.ImageType]:
-        user_id = info.context.get("user_id")
-        use_case = get_image_collection_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_image_collection_use_case()
+
             return use_case.execte(
                 user_id=user_id,
                 post_id=post_id,
@@ -46,9 +46,9 @@ class ImageQueries:
         self,
         post_id: UUID,
     ) -> List[types.ImageType]:
-        use_case = get_image_collection_use_case()
-
         try:
+            use_case = get_image_collection_use_case()
+            
             return use_case.execte(
                 post_id=post_id,
                 include_drafts=False

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @strawberry.type
 class EmailMutations:
     @strawberry.mutation(
-        description="Send verification code to users email. Will receive a token that can be used for verified requests."
+        description="Send verification code to users email. Will receive a token that can be used for verified requests. This endpoint can also be used with an Auth header to recieve token needed for verifed update to users email"
     )
     @req_validation.validate_input_to_model
     @gather_context.inject_strawberry_context
@@ -24,10 +24,10 @@ class EmailMutations:
         info: strawberry.Info,
         input: VerifyEmailType
     ) -> VerificationTokenType:
-        use_case = get_verification_email_use_case()
-        rule = get_unique_email_rule()
-        
         try: 
+            use_case = get_verification_email_use_case()
+            rule = get_unique_email_rule()
+            
             rule.validate(
                 email=input.email
             )
@@ -65,41 +65,50 @@ class EmailMutations:
         
     
     @strawberry.mutation(
-        description="Send account recovery email"
+        description="Searches for user in db and sends email verification email, token recieved must be used for verified update to users password"
     )
     @req_validation.validate_input_to_model
-    def account_recovery_email(
+    def public_account_recovery(
         self,
         input: VerifyEmailType
-    ) -> EmailConfirmationType:
+    ) -> VerificationTokenType:
         try:
-            use_case = get_account_recovery_email_use_case()
+            use_case = get_verification_email_use_case()
             rule = get_user_exists_rule()
+        
+            existing_user = rule.validate(email=input.email)
 
-            user = rule.validate(
-                email=input.email
-            )
+            code = get_random_code(len=6)
+
+            use_case.execute(to=input.email, verification_code=code)
 
             web_token_service = get_web_token_service()
+        
             token_payload = {
-                "user_id": str(user.user_id)
-            } 
+                "user_id": existing_user.user_id,
+                "verification_code": code
+            }
 
-            token = web_token_service.generate(payload=token_payload, expiration=86400) # 24 hours
-
-            use_case.execute(
-                to=input.email,
-                token=token
+            verification_token = web_token_service.generate(
+                payload=token_payload,
+                expiration=900
             )
 
-            return EmailConfirmationType(
-                message="Recovery email sent"
+            return VerificationTokenType(
+                verification_token=verification_token
             )
-
+        
         except NotFoundException as e:
             raise GraphQlException(str(e))
         
         except Exception as e:
             logger.error(str(e))
             raise GraphQlException()
+
+
+
+
+
+            
+        
     

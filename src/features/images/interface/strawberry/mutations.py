@@ -24,12 +24,13 @@ class ImageMutaions:
         images: List[Upload],
         info: strawberry.Info
     ) -> types.UploadType:
-        user_id = info.context.get("user_id")
-        use_case = use_cases.get_upload_image_use_case()
-        content_rule = business_rules.get_supported_content_type_rule()
-        uploaded_images = []
-        errors = []
         try:
+            user_id = info.context.get("user_id")
+            use_case = use_cases.get_upload_image_use_case()
+            content_rule = business_rules.get_supported_content_type_rule()
+            uploaded_images = []
+            errors = []
+
             for image in images:
                 content_type = image.content_type
                 filename = image.filename.lower().replace(" ", "_")
@@ -73,10 +74,9 @@ class ImageMutaions:
         image_id: UUID,
         info: strawberry.Info
     ) -> types.ImageType:
-        user_id = info.context.get("user_id")
-        use_case = use_cases.get_delete_image_upload_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = use_cases.get_delete_image_upload_use_case()
             return use_case.execute(
                 user_id=user_id,
                 image_id=image_id

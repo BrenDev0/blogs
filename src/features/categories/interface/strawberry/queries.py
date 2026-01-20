@@ -17,8 +17,9 @@ class CategoryQueries:
         self,
         blog_id: UUID
     ) -> List[CategoryType]:
-        use_case = get_category_collection_use_case()
         try:
+            use_case = get_category_collection_use_case()
+            
             return use_case.execute(
                 blog_id=blog_id
             )

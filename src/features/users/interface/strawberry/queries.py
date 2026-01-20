@@ -16,9 +16,8 @@ class UserQueries:
         self,
         info: strawberry.Info
     ) -> UserType | None:
-        use_case = get_user_use_case()
-
         try:
+            use_case = get_user_use_case()
             user_id = info.context.get("user_id")
             
             return use_case.execute(

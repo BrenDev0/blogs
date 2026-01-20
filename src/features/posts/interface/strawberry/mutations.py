@@ -35,10 +35,10 @@ class BlogPostMutations:
         input: inputs.CreateBlogPostInput,
         images: List[Upload] | None = None,
     ) -> types.BlogPostType | types.BlogPostWithUploadType:
-        user_id = info.context.get("user_id")
-        use_case = get_create_blog_post_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_create_blog_post_use_case()
+
             new_post = use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id,
@@ -96,10 +96,10 @@ class BlogPostMutations:
         info: strawberry.Info,
         input: inputs.UpdateBlogPostInput
     ) -> types.BlogPostType:
-        user_id = info.context.get("user_id")
-        use_case = get_update_blog_post_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_update_blog_post_use_case()
+
             NULLABLE_FIELDS = {"category_id", "content_1"}
 
             for field, value in vars(input).items():
@@ -140,10 +140,10 @@ class BlogPostMutations:
         post_id: UUID,
         info: strawberry.Info
     ) -> types.BlogPostType:
-        user_id = info.context.get("user_id")
-        use_case = get_delete_blog_post_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_delete_blog_post_use_case()
+            
             return use_case.execute(
                 user_id=user_id,
                 post_id=post_id

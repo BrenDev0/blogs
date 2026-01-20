@@ -24,10 +24,10 @@ class BlogQueries:
         info: strawberry.Info,
         blog_id: UUID
     ) -> BlogType:
-        user_id = info.context.get("user_id")
-        use_case = get_blog_resource_use_case()
-
         try: 
+            user_id = info.context.get("user_id")
+            use_case = get_blog_resource_use_case()
+
             return use_case.execute(
                 user_id=user_id,
                 blog_id=blog_id
@@ -48,10 +48,10 @@ class BlogQueries:
         self,
         info: strawberry.Info
     )-> List[BlogType]:
-        user_id = info.context.get("user_id")
-        use_case = get_blogs_collection_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_blogs_collection_use_case()
+            
             return use_case.execute(
                 user_id=user_id
             )

@@ -27,10 +27,10 @@ class CategoryMutation:
         info: strawberry.Info,
         input: inputs.CreateCategoryInput
     ) -> types.CategoryType:
-        user_id = info.context.get("user_id")
-        use_case = get_create_category_use_case()
-        
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_create_category_use_case()
+
             return use_case.execute(
                 blog_id=blog_id,
                 user_id=user_id,
@@ -52,10 +52,10 @@ class CategoryMutation:
         category_id: UUID,
         input: inputs.UpdateCategoryInput
     )-> types.CategoryType:
-        user_id = info.context.get("user_id")
-        use_case = get_update_category_use_case()
-    
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_update_category_use_case()
+
             return use_case.execute(
                 user_id=user_id,
                 category_id=category_id,
@@ -79,10 +79,10 @@ class CategoryMutation:
         info: strawberry.Info,
         category_id: UUID
     )-> types.CategoryType:
-        user_id = info.context.get("user_id")
-        use_case = get_delete_category_use_case()
-
         try:
+            user_id = info.context.get("user_id")
+            use_case = get_delete_category_use_case()
+            
             return use_case.execute(
                 user_id=user_id,
                 category_id=category_id
