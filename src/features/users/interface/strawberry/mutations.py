@@ -15,7 +15,7 @@ from src.features.users.dependencies.use_cases import (
     get_update_user_use_case
 )
 from src.features.users.dependencies.business_rules import get_update_password_rule
-from src.security.dependencies.services import get_web_token_service
+from src.security.dependencies.services import get_web_token_service, get_encrytpion_service
 logger = logging.getLogger(__name__)
 
 @strawberry.type
@@ -31,7 +31,9 @@ class UserMutations:
         input: inputs.CreateUserInput
     ) -> types.UserWithTokenType:
         verification_code = info.context.get("verification_code")
-        if int(input.code) != int(verification_code):
+        encryption = get_encrytpion_service()
+
+        if int(input.code) != int(encryption.decrypt(verification_code)):
             raise GraphQlException("Unauthorized")
         
         try:
@@ -126,7 +128,9 @@ class UserMutations:
             raise GraphQlException("Forbidden")
             
         verification_code = info.context.get("verification_code")
-        if int(input.code) != int(verification_code):
+        encryption = get_encrytpion_service()
+
+        if int(input.code) != int(encryption.decrypt(verification_code)):
             raise GraphQlException("Unauthorized")
         
         if input.email and input.password:
