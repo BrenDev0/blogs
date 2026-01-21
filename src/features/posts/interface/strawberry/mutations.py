@@ -49,12 +49,13 @@ class BlogPostMutations:
                 upload_use_case = use_cases.get_upload_image_use_case()
                 uploaded_images = []
                 errors = []
+                rule = business_rules.get_supported_content_type_rule()
                 
                 for image in images:
                     content_type = image.content_type
                     filename = image.filename.lower().replace(" ", "_")
 
-                    business_rules.content_rule.validate(content_type=content_type, filename=filename) # validate supported content type
+                    rule.validate(content_type=content_type, filename=filename) # validate supported content type
                     
                     file_bytes = await image.read()
                     
