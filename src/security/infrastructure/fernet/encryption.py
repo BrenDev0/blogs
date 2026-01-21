@@ -1,20 +1,22 @@
 from cryptography.fernet import Fernet
-import os 
+from typing import Union
+import os
+
 
 class FernetEncryptionService:
     def __init__(self):
         self.__secret_key = os.getenv("ENCRYPTION_KEY")
 
         if not self.__secret_key:
-            raise ValueError("Encyption variables not set")
-        
+            raise ValueError("Encryption variables not set")
+
         self.__fernet = Fernet(self.__secret_key)
-        
 
-    def encrypt(self, plaintext: str) -> str:
-        encrypted = self.__fernet.encrypt(plaintext.encode())
-        return encrypted.decode()
+    def encrypt(self, data: Union[str, int]) -> str:
+        data_str = str(data)
+        encrypted = self.__fernet.encrypt(data_str.encode("utf-8"))
+        return encrypted.decode("utf-8")
 
-    def decrypt(self, ciphertext: str) -> str:
-        decrypted = self.__fernet.decrypt(ciphertext.encode())
-        return decrypted.decode()
+    def decrypt(self, data: str) -> str:
+        decrypted = self.__fernet.decrypt(data.encode("utf-8"))
+        return decrypted.decode("utf-8")
