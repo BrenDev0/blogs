@@ -88,7 +88,7 @@ class EmailMutations:
             encryption = get_encrytpion_service()
 
             token_payload = {
-                "user_id": existing_user.user_id,
+                "user_id": str(existing_user.user_id),
                 "verification_code": encryption.encrypt(code)
             }
 

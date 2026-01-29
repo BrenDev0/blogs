@@ -33,7 +33,9 @@ class GetBlogPostCollection:
                 secondary_key="category_id",
                 secondary_value=category_id,
                 limit=per_page,
-                offset=offset
+                offset=offset,
+                desc=True,
+                order_by="created_at"
             )
         
         else:
@@ -41,7 +43,9 @@ class GetBlogPostCollection:
             key="blog_id",
             value=blog_id,
             limit=per_page,
-            offset=offset
+            offset=offset,
+            desc=True,
+            order_by="created_at"
         )
 
         if not posts:
