@@ -72,7 +72,9 @@ class CommentsCollection:
                 limit=per_page,
                 offset=offset,
                 secondary_key="approved",
-                secondary_value=True
+                secondary_value=True,
+                desc=True,
+                order_by="created_at"
             )
         else: 
             if not user_id:
@@ -96,7 +98,9 @@ class CommentsCollection:
                         limit=per_page,
                         offset=offset,
                         secondary_key=filter,
-                        secondary_value=valid_filter_value
+                        secondary_value=valid_filter_value,
+                        desc=True,
+                        order_by="created_at"
                     )
 
                 else: 
@@ -104,7 +108,9 @@ class CommentsCollection:
                         key="post_id",
                         value=scope_id,
                         limit=per_page,
-                        offset=offset
+                        offset=offset,
+                        desc=True,
+                        order_by="created_at"
                     )
             else:
                 all_posts: List[BlogPost] = self.__post_repository.get_many(
@@ -122,7 +128,9 @@ class CommentsCollection:
                         limit=per_page,
                         offset=offset,
                         secondary_key=filter,
-                        secondary_value=valid_filter_value
+                        secondary_value=valid_filter_value,
+                        desc=True,
+                        order_by="created_at"
                     )
                 
                 else:
@@ -132,7 +140,9 @@ class CommentsCollection:
                             post.post_id for post in all_posts
                         ],
                         limit=per_page,
-                        offset=offset
+                        offset=offset,
+                        desc=True,
+                        order_by="created_at"
                     )
         
         return [
